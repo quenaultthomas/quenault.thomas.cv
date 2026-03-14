@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dossier de compétences – Thomas Quenault</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,600;1,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink:      #111820;
+    --sub:      #3d5166;
+    --muted:    #7a8fa3;
+    --blue:     #1a56d6;
+    --blue-l:   #e4edfc;
+    --blue-t:   #0f3a9a;
+    --teal:     #0b8a6e;
+    --teal-l:   #ddf5ef;
+    --amber:    #b45309;
+    --amber-l:  #fef3c7;
+    --red:      #b91c1c;
+    --red-l:    #fee2e2;
+    --white:    #ffffff;
+    --bg:       #f8fafc;
+    --border:   #e2eaf3;
+    --card:     #ffffff;
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.6;
+  }
+
+  /* ── COVER ── */
+  .cover {
+    background: var(--ink);
+    padding: 64px 80px 56px;
+    position: relative;
+    overflow: hidden;
+  }
+  .cover::before {
+    content: '';
+    position: absolute; top: -60px; right: -60px;
+    width: 320px; height: 320px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+  .cover::after {
+    content: '';
+    position: absolute; bottom: -40px; right: 120px;
+    width: 180px; height: 180px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.04);
+  }
+  .cover-label {
+    font-size: 10px; font-weight: 500;
+    text-transform: uppercase; letter-spacing: 3px;
+    color: #5fa0e0; margin-bottom: 20px;
+  }
+  .cover-name {
+    font-family: 'Fraunces', serif;
+    font-size: 52px; font-weight: 300;
+    color: #fff; line-height: 1.1; margin-bottom: 12px;
+  }
+  .cover-title {
+    font-size: 18px; color: #7ab0d8;
+    font-weight: 300; margin-bottom: 32px;
+  }
+  .cover-meta {
+    display: flex; gap: 32px; flex-wrap: wrap;
+  }
+  .cover-meta-item {
+    font-size: 12px; color: #5a7a99;
+  }
+  .cover-meta-item strong { color: #a0c4e8; font-weight: 400; display: block; font-size: 13px; }
+
+  /* ── NAV ── */
+  .toc {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    padding: 0 80px;
+    display: flex; gap: 0;
+    position: sticky; top: 0; z-index: 10;
+  }
+  .toc a {
+    display: block; padding: 16px 20px;
+    font-size: 11px; font-weight: 500;
+    text-transform: uppercase; letter-spacing: 1.2px;
+    color: var(--muted); text-decoration: none;
+    border-bottom: 2px solid transparent;
+    transition: color .2s, border-color .2s;
+  }
+  .toc a:hover { color: var(--blue); border-bottom-color: var(--blue); }
+
+  /* ── LAYOUT ── */
+  .content { max-width: 960px; margin: 0 auto; padding: 56px 40px; }
+
+  /* ── SECTION HEADER ── */
+  .section-header {
+    display: flex; align-items: baseline; gap: 16px;
+    margin-bottom: 32px; padding-bottom: 16px;
+    border-bottom: 2px solid var(--ink);
+  }
+  .section-header h2 {
+    font-family: 'Fraunces', serif;
+    font-size: 28px; font-weight: 300; color: var(--ink);
+  }
+  .section-header span {
+    font-size: 11px; font-weight: 500;
+    text-transform: uppercase; letter-spacing: 2px;
+    color: var(--muted);
+  }
+
+  /* ── COMPETENCES GLOBALES ── */
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px; margin-bottom: 48px;
+  }
+  .skill-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 22px;
+  }
+  .skill-card-title {
+    font-size: 10px; font-weight: 500;
+    text-transform: uppercase; letter-spacing: 1.8px;
+    color: var(--blue); margin-bottom: 12px;
+  }
+  .skill-pills { display: flex; flex-wrap: wrap; gap: 6px; }
+  .pill {
+    font-size: 11px; padding: 3px 10px;
+    border-radius: 20px; font-weight: 400;
+  }
+  .pill-blue  { background: var(--blue-l);  color: var(--blue-t); }
+  .pill-teal  { background: var(--teal-l);  color: var(--teal); }
+  .pill-amber { background: var(--amber-l); color: var(--amber); }
+  .pill-ink   { background: #eef2f7;        color: var(--sub); }
+
+  /* ── PROJECT CARD ── */
+  .project { margin-bottom: 56px; }
+
+  .project-header {
+    display: grid;
+    grid-template-columns: 4px 1fr;
+    gap: 0 20px;
+    margin-bottom: 24px;
+  }
+  .project-accent {
+    background: var(--blue);
+    border-radius: 4px;
+    grid-row: 1 / 4;
+  }
+  .project-label {
+    font-size: 10px; font-weight: 500;
+    text-transform: uppercase; letter-spacing: 2px;
+    color: var(--blue); margin-bottom: 4px;
+  }
+  .project-name {
+    font-family: 'Fraunces', serif;
+    font-size: 22px; font-weight: 400; color: var(--ink);
+    margin-bottom: 4px;
+  }
+  .project-meta {
+    font-size: 12px; color: var(--muted); font-style: italic;
+  }
+
+  .project-summary {
+    background: var(--blue-l);
+    border-left: 3px solid var(--blue);
+    border-radius: 0 8px 8px 0;
+    padding: 14px 18px;
+    font-size: 13px; color: var(--sub);
+    line-height: 1.65; margin-bottom: 24px;
+  }
+
+  .project-body {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  @media (max-width: 700px) { .project-body { grid-template-columns: 1fr; } }
+
+  .block {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 20px;
+  }
+  .block.full { grid-column: 1 / -1; }
+  .block-title {
+    font-size: 9px; font-weight: 500;
+    text-transform: uppercase; letter-spacing: 2px;
+    color: var(--muted); margin-bottom: 12px;
+  }
+  .block ul {
+    list-style: none; padding: 0;
+  }
+  .block ul li {
+    font-size: 12px; color: var(--sub);
+    padding: 5px 0;
+    border-bottom: 1px solid var(--border);
+    line-height: 1.55;
+    display: flex; gap: 8px; align-items: flex-start;
+  }
+  .block ul li:last-child { border-bottom: none; }
+  .block ul li::before {
+    content: '›';
+    color: var(--blue); font-weight: 500;
+    flex-shrink: 0; margin-top: 1px;
+  }
+  .block ul li strong { color: var(--ink); }
+
+  .stack-grid { display: flex; flex-wrap: wrap; gap: 6px; }
+  .stag {
+    font-size: 10.5px; font-weight: 500;
+    padding: 3px 10px; border-radius: 6px;
+  }
+  .stag-java   { background: #fef9ec; color: #92400e; border: 1px solid #fde68a; }
+  .stag-spring { background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; }
+  .stag-front  { background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; }
+  .stag-devops { background: #f5f3ff; color: #5b21b6; border: 1px solid #ddd6fe; }
+  .stag-db     { background: #fdf4ff; color: #86198f; border: 1px solid #f0abfc; }
+  .stag-test   { background: #fff1f2; color: #9f1239; border: 1px solid #fecdd3; }
+  .stag-method { background: #f0fdf4; color: #14532d; border: 1px solid #bbf7d0; }
+  .stag-other  { background: #f8fafc; color: #475569; border: 1px solid #e2e8f0; }
+
+  .role-badge {
+    display: inline-block;
+    font-size: 10px; font-weight: 500;
+    padding: 3px 12px; border-radius: 20px;
+    margin-right: 6px; margin-bottom: 6px;
+  }
+  .badge-lead   { background: #fef3c7; color: #92400e; }
+  .badge-ref    { background: #dbeafe; color: #1e3a8a; }
+  .badge-dev    { background: #e0e7ff; color: #3730a3; }
+
+  .divider { height: 1px; background: var(--border); margin: 48px 0; }
+
+  /* ── PRINT ── */
+  @media print {
+    body { background: none; }
+    .toc { display: none; }
+    .content { padding: 32px 24px; }
+    * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+    @page { margin: 12mm; size: A4; }
+    .project { page-break-inside: avoid; break-inside: avoid; }
+    .block { page-break-inside: avoid; break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══ COVER ══ -->
+<div class="cover">
+  <div class="cover-label">Dossier de compétences</div>
+  <div class="cover-name">Thomas<br>Quenault</div>
+  <div class="cover-title">Ingénieur Études & Développement · 9+ ans d'expérience</div>
+  <div class="cover-meta">
+    <div class="cover-meta-item"><strong>06 68 35 11 08</strong>Contact</div>
+    <div class="cover-meta-item"><strong><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="98e9edfdf6f9edf4ecb6ecf0f7f5f9ebd8fff5f9f1f4b6fbf7f5">[email&#160;protected]</a></strong>Email</div>
+    <div class="cover-meta-item"><strong>Saint-Herblain, 44</strong>Localisation</div>
+    <div class="cover-meta-item"><strong>Java · Spring Boot · Back-End / Fullstack</strong>Spécialité</div>
+  </div>
+</div>
+
+<!-- ══ NAV ══ -->
+<nav class="toc">
+  <a href="#competences">Compétences</a>
+  <a href="#rece">RECE</a>
+  <a href="#csrd">CSRD</a>
+  <a href="#sg">Société Générale</a>
+  <a href="#pasrau">PASRAU</a>
+  <a href="#pe">Pôle Emploi</a>
+</nav>
+
+<div class="content">
+
+  <!-- ══ COMPÉTENCES GLOBALES ══ -->
+  <section id="competences">
+    <div class="section-header">
+      <h2>Compétences globales</h2>
+      <span>Vue d'ensemble</span>
+    </div>
+
+    <div class="skills-grid">
+      <div class="skill-card">
+        <div class="skill-card-title">Back-End</div>
+        <div class="skill-pills">
+          <span class="pill pill-blue">Java 8</span>
+          <span class="pill pill-blue">Java 11</span>
+          <span class="pill pill-blue">Java 17</span>
+          <span class="pill pill-blue">Java 21</span>
+          <span class="pill pill-blue">Spring Boot 3</span>
+          <span class="pill pill-blue">Spring MVC</span>
+          <span class="pill pill-blue">Spring Batch</span>
+          <span class="pill pill-blue">Microservices</span>
+          <span class="pill pill-blue">REST / SOAP</span>
+          <span class="pill pill-blue">RabbitMQ</span>
+          <span class="pill pill-blue">JPA / Hibernate</span>
+        </div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-card-title">Front-End</div>
+        <div class="skill-pills">
+          <span class="pill pill-blue">Angular 8</span>
+          <span class="pill pill-blue">Angular 9+</span>
+          <span class="pill pill-blue">RxJS</span>
+          <span class="pill pill-blue">TypeScript</span>
+          <span class="pill pill-blue">Swagger</span>
+        </div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-card-title">DevOps & CI/CD</div>
+        <div class="skill-pills">
+          <span class="pill pill-teal">Git / GitLab</span>
+          <span class="pill pill-teal">Jenkins</span>
+          <span class="pill pill-teal">Concourse</span>
+          <span class="pill pill-teal">Docker</span>
+          <span class="pill pill-teal">Kubernetes</span>
+          <span class="pill pill-teal">XLDeploy</span>
+          <span class="pill pill-teal">WebLogic</span>
+          <span class="pill pill-teal">CI/CD</span>
+        </div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-card-title">Bases de données</div>
+        <div class="skill-pills">
+          <span class="pill pill-amber">PostgreSQL</span>
+          <span class="pill pill-amber">Oracle</span>
+          <span class="pill pill-amber">Elasticsearch</span>
+          <span class="pill pill-amber">SQL</span>
+          <span class="pill pill-amber">Hibernate</span>
+        </div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-card-title">Tests & Qualité</div>
+        <div class="skill-pills">
+          <span class="pill pill-ink">JUnit</span>
+          <span class="pill pill-ink">Mockito</span>
+          <span class="pill pill-ink">MockServer</span>
+          <span class="pill pill-ink">SonarQube</span>
+          <span class="pill pill-ink">Cypress</span>
+          <span class="pill pill-ink">Cucumber</span>
+          <span class="pill pill-ink">Postman</span>
+          <span class="pill pill-ink">SOAPUI</span>
+        </div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-card-title">Méthodes & Soft skills</div>
+        <div class="skill-pills">
+          <span class="pill pill-ink">Scrum</span>
+          <span class="pill pill-ink">Kanban</span>
+          <span class="pill pill-ink">SAFe</span>
+          <span class="pill pill-ink">Lead Dev</span>
+          <span class="pill pill-ink">Référent technique</span>
+          <span class="pill pill-ink">Code review</span>
+          <span class="pill pill-ink">Clean Code</span>
+          <span class="pill pill-ink">Craftmanship</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ══ RECE ══ -->
+  <section id="rece">
+    <div class="section-header">
+      <h2>Projet RECE</h2>
+      <span>Avr. 2026 – Présent</span>
+    </div>
+
+    <div class="project">
+      <div class="project-header">
+        <div class="project-accent"></div>
+        <div class="project-label">Catamania · Ministère de l'Europe et des Affaires étrangères</div>
+        <div class="project-name">Référentiel Électronique d'État Civil</div>
+        <div class="project-meta">Ingénieur études & développement Back-End · Kanban</div>
+      </div>
+
+      <div class="project-summary">
+        Application de gestion numérique des actes d'état civil pour le Ministère de l'Europe et des Affaires étrangères. L'application vise à centraliser et sécuriser les données d'état civil des ressortissants français à l'étranger, en assurant leur intégrité et leur traçabilité.
+      </div>
+
+      <div class="project-body">
+        <div class="block">
+          <div class="block-title">Rôle & responsabilités</div>
+          <ul>
+            <li>Développement back-end exclusif de l'application</li>
+            <li>Conception et implémentation des API REST</li>
+            <li>Modélisation et gestion de la base de données PostgreSQL</li>
+            <li>Mise en place et suivi de la chaîne CI/CD</li>
+            <li>Analyse de la qualité du code avec SonarQube</li>
+            <li>Participation aux cérémonies Scrum</li>
+          </ul>
+        </div>
+        <div class="block">
+          <div class="block-title">Contexte métier</div>
+          <ul>
+            <li>Gestion numérique des actes d'état civil à l'étranger</li>
+            <li>Centralisation des données des ressortissants français</li>
+            <li>Garantie d'intégrité et de traçabilité des données</li>
+            <li>Secteur : Administration publique / Diplomatie</li>
+          </ul>
+        </div>
+        <div class="block full">
+          <div class="block-title">Environnement technique</div>
+          <div class="stack-grid">
+            <span class="stag stag-java">Java 17</span>
+            <span class="stag stag-spring">Spring Boot 3</span>
+            <span class="stag stag-spring">REST</span>
+            <span class="stag stag-db">PostgreSQL</span>
+            <span class="stag stag-devops">Git CI</span>
+            <span class="stag stag-devops">Sonar</span>
+            <span class="stag stag-method">Scrum</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ══ CSRD ══ -->
+  <section id="csrd">
+    <div class="section-header">
+      <h2>Projet CSRD</h2>
+      <span>Janv. 2025 – Avr. 2026</span>
+    </div>
+
+    <div class="project">
+      <div class="project-header">
+        <div class="project-accent"></div>
+        <div class="project-label">Catamania · SIGMA Informatique</div>
+        <div class="project-name">Double matérialité – CSRD</div>
+        <div class="project-meta">Ingénieur études & développement Back-End · Kanban</div>
+      </div>
+
+      <div class="project-summary">
+        Développement back-end d'une application permettant d'établir la double matérialité d'une entreprise afin de prioriser le contenu du formulaire CSRD (Corporate Sustainability Reporting Directive). La double matérialité consiste à évaluer à la fois l'impact financier des enjeux ESG sur l'entreprise, et l'impact de l'entreprise sur l'environnement et la société.
+      </div>
+
+      <div class="project-body">
+        <div class="block">
+          <div class="block-title">Rôle & responsabilités</div>
+          <ul>
+            <li>Développement back-end exclusif de l'application</li>
+            <li>Conception des API REST métier</li>
+            <li>Modélisation des données ESG en base PostgreSQL</li>
+            <li>Mise en place de la chaîne CI/CD</li>
+            <li>Analyse qualité du code (Sonar)</li>
+            <li>Participation aux rituels Kanban</li>
+          </ul>
+        </div>
+        <div class="block">
+          <div class="block-title">Contexte métier</div>
+          <ul>
+            <li>Directive européenne CSRD (reporting durabilité)</li>
+            <li>Évaluation de la double matérialité ESG</li>
+            <li>Priorisation du contenu du formulaire réglementaire</li>
+            <li>Secteur : RSE / Finance / Conformité réglementaire</li>
+          </ul>
+        </div>
+        <div class="block full">
+          <div class="block-title">Environnement technique</div>
+          <div class="stack-grid">
+            <span class="stag stag-java">Java 21</span>
+            <span class="stag stag-spring">Spring Boot 3</span>
+            <span class="stag stag-spring">REST</span>
+            <span class="stag stag-db">PostgreSQL</span>
+            <span class="stag stag-devops">Git CI</span>
+            <span class="stag stag-devops">Sonar</span>
+            <span class="stag stag-method">Kanban</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ══ SOCIÉTÉ GÉNÉRALE ══ -->
+  <section id="sg">
+    <div class="section-header">
+      <h2>Mission Société Générale</h2>
+      <span>Janv. 2022 – Janv. 2025 · 3 ans</span>
+    </div>
+
+    <div class="project">
+      <div class="project-header">
+        <div class="project-accent"></div>
+        <div class="project-label">Catamania · Société Générale (SGSS) · Banque – Titres</div>
+        <div class="project-name">Applications fiscales internationales</div>
+        <div class="project-meta">Ingénieur études & développement Fullstack · Scrum</div>
+      </div>
+
+      <div class="project-summary">
+        Dans le cadre de la refonte complète des applications fiscales de la Société Générale Securities Services (SGSS), contribution au développement de microservices REST avec une architecture pilotée par les messages, migration cloud privé, et maintien en condition opérationnelle du parc applicatif existant.
+      </div>
+
+      <!-- TPRQI -->
+      <div style="margin-bottom: 20px;">
+        <div style="font-size: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: 2px; color: var(--muted); margin-bottom: 8px;">Application 1</div>
+        <div style="font-family: 'Fraunces', serif; font-size: 17px; color: var(--ink); margin-bottom: 6px;">TPRQI – Formulaire 1042-S</div>
+        <div style="font-size: 12px; color: var(--sub); line-height: 1.6; margin-bottom: 12px;">
+          Génération automatisée du formulaire fiscal 1042-S à destination de l'administration fiscale américaine (IRS). L'application traite les revenus de source américaine (actifs et titres en dollar) versés à des bénéficiaires étrangers, en assurant la conformité avec les obligations de reporting FATCA.
+        </div>
+      </div>
+
+      <!-- T-REX -->
+      <div style="margin-bottom: 24px;">
+        <div style="font-size: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: 2px; color: var(--muted); margin-bottom: 8px;">Application 2</div>
+        <div style="font-family: 'Fraunces', serif; font-size: 17px; color: var(--ink); margin-bottom: 6px;">T-REX – Récupération de taxes</div>
+        <div style="font-size: 12px; color: var(--sub); line-height: 1.6; margin-bottom: 12px;">
+          Application de gestion des dossiers de récupération de taxes (withholding tax reclaim). Suite à la déclaration des informations clients, l'outil pilote l'ensemble du processus de remboursement des retenues à la source indûment prélevées auprès des autorités fiscales étrangères.
+        </div>
+      </div>
+
+      <div class="project-body">
+        <div class="block">
+          <div class="block-title">Activités Back-End</div>
+          <ul>
+            <li>Développements Java 21 / Spring Boot 3</li>
+            <li>Architecture microservices REST</li>
+            <li>Architecture pilotée par les messages (RabbitMQ)</li>
+            <li>Clean code & clean architecture</li>
+            <li>Onboarding applicatif (Git, SG Market, SG IAM)</li>
+            <li>Migration vers le cloud privé SG</li>
+            <li>Maintenance corrective et évolutive</li>
+          </ul>
+        </div>
+        <div class="block">
+          <div class="block-title">Activités Front-End & Transverses</div>
+          <ul>
+            <li>Développement de composants Angular dynamiques</li>
+            <li>Mise en place de la chaîne CI/CD (Jenkins, Git)</li>
+            <li>Déploiement Kubernetes</li>
+            <li>Revues de code croisées (mob review)</li>
+            <li>Participation aux réunions Craftmanship</li>
+            <li>Animation des cérémonies Scrum</li>
+            <li>Rédaction de la documentation technique</li>
+          </ul>
+        </div>
+        <div class="block">
+          <div class="block-title">Tests & Qualité</div>
+          <ul>
+            <li>Tests unitaires et d'intégration</li>
+            <li>Analyse qualité continue (SonarQube)</li>
+            <li>Feedbacks constructifs en mob review</li>
+            <li>Support en production</li>
+          </ul>
+        </div>
+        <div class="block">
+          <div class="block-title">Environnement technique</div>
+          <div class="stack-grid">
+            <span class="stag stag-java">Java 21</span>
+            <span class="stag stag-spring">Spring Boot 3</span>
+            <span class="stag stag-spring">Microservices</span>
+            <span class="stag stag-spring">RabbitMQ</span>
+            <span class="stag stag-front">Angular</span>
+            <span class="stag stag-db">PostgreSQL</span>
+            <span class="stag stag-db">Oracle</span>
+            <span class="stag stag-db">Elasticsearch</span>
+            <span class="stag stag-devops">Docker</span>
+            <span class="stag stag-devops">Kubernetes</span>
+            <span class="stag stag-devops">Jenkins</span>
+            <span class="stag stag-devops">Git</span>
+            <span class="stag stag-test">Sonar</span>
+            <span class="stag stag-method">Scrum</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ══ PASRAU ══ -->
+  <section id="pasrau">
+    <div class="section-header">
+      <h2>Projet PASRAU</h2>
+      <span>Avr. – Déc. 2021 · 9 mois</span>
+    </div>
+
+    <div class="project">
+      <div class="project-header">
+        <div class="project-accent"></div>
+        <div class="project-label">Sopra Steria · GIP MDS · Secteur Public</div>
+        <div class="project-name">Prélèvement à la Source pour les Revenus Autres que Salariaux</div>
+        <div class="project-meta">Ingénieur études & développement Fullstack</div>
+      </div>
+
+      <div class="project-summary">
+        Le projet PASRAU fait partie du programme national de simplification des déclarations sociales. Il a pour objectif de faciliter et centraliser la déclaration des revenus de remplacement (chômage, pensions, etc.) par les organismes payeurs auprès des administrations publiques, notamment les organismes de sécurité sociale.
+      </div>
+
+      <div class="project-body">
+        <div class="block">
+          <div class="block-title">Rôle & responsabilités</div>
+          <ul>
+            <li>Conception des fonctionnalités pour PASRAU et SPARAU</li>
+            <li>Développements Spring Batch et Spring MVC</li>
+            <li>Réalisation de tests unitaires et d'intégration</li>
+            <li>Intégration avec les SI de l'État</li>
+            <li>Gestion des sources (Git, SVN)</li>
+          </ul>
+        </div>
+        <div class="block">
+          <div class="block-title">Contexte métier</div>
+          <ul>
+            <li>Prélèvement à la source des revenus hors salaires</li>
+            <li>Déclarations sociales des organismes payeurs</li>
+            <li>Revenus de remplacement : chômage, pensions</li>
+            <li>Interopérabilité avec les SI des administrations publiques</li>
+          </ul>
+        </div>
+        <div class="block full">
+          <div class="block-title">Environnement technique</div>
+          <div class="stack-grid">
+            <span class="stag stag-java">Java</span>
+            <span class="stag stag-spring">Spring Batch</span>
+            <span class="stag stag-spring">Spring MVC</span>
+            <span class="stag stag-spring">REST</span>
+            <span class="stag stag-spring">SOAP</span>
+            <span class="stag stag-db">Oracle</span>
+            <span class="stag stag-db">PostgreSQL</span>
+            <span class="stag stag-devops">WebLogic</span>
+            <span class="stag stag-devops">Git</span>
+            <span class="stag stag-devops">GitLab CI/CD</span>
+            <span class="stag stag-devops">SVN</span>
+            <span class="stag stag-devops">Jenkins</span>
+            <span class="stag stag-devops">XLDeploy</span>
+            <span class="stag stag-devops">UNIX</span>
+            <span class="stag stag-test">SonarQube</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ══ PÔLE EMPLOI ══ -->
+  <section id="pe">
+    <div class="section-header">
+      <h2>Mission Pôle Emploi</h2>
+      <span>Déc. 2016 – Avr. 2021 · 4 ans 5 mois</span>
+    </div>
+
+    <div class="project">
+      <div class="project-header">
+        <div class="project-accent"></div>
+        <div class="project-label">Sopra Steria · Pôle Emploi · Secteur Public</div>
+        <div class="project-name">DUNE Offres & MARS</div>
+        <div class="project-meta">Ingénieur études & développement Fullstack · Référent technique → Lead Developer · Scrum / SAFe</div>
+      </div>
+
+      <div class="project-summary">
+        Deux projets majeurs au sein de Pôle Emploi sur près de 5 ans, avec une évolution significative du rôle : de développeur référent technique sur DUNE Offres, à Lead Developer sur le projet de refonte MARS.
+      </div>
+
+      <!-- DUNE -->
+      <div style="margin-bottom: 24px;">
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+          <div style="font-family:'Fraunces',serif; font-size:18px; color:var(--ink);">DUNE Offres</div>
+          <span class="role-badge badge-ref">Référent technique</span>
+          <span style="font-size:11px; color:var(--muted); font-style:italic;">2016 – 2019</span>
+        </div>
+        <div class="block full" style="margin-bottom:0">
+          <div class="block-title">Missions</div>
+          <ul>
+            <li>Application de gestion des offres d'emploi : création, recherche, mise en relation employeurs/demandeurs</li>
+            <li>Développement de services back-end (Framework V4 / Angular)</li>
+            <li>Tests manuels et automatisés (unitaires, intégration, robots)</li>
+            <li>Analyse et correction d'anomalies en Qualification et Production</li>
+            <li>Suivi de la montée en compétences des collaborateurs</li>
+            <li>Garant des bonnes pratiques et référent technique de l'équipe</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- MARS -->
+      <div style="margin-bottom: 24px;">
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+          <div style="font-family:'Fraunces',serif; font-size:18px; color:var(--ink);">MARS – Mon Assistant de Recouvrement Simplifié</div>
+          <span class="role-badge badge-lead">Lead Developer</span>
+          <span style="font-size:11px; color:var(--muted); font-style:italic;">2019 – 2021</span>
+        </div>
+        <div style="font-size: 12px; color:var(--sub); line-height:1.6; margin-bottom:12px;">
+          Refonte complète d'une application legacy COBOL vers une stack moderne Java / Angular. Application web de gestion du recouvrement de cotisations sociales des expatriés, intermittents du spectacle, et gestion des aides à l'embauche employeurs.
+        </div>
+        <div class="block full" style="margin-bottom:0">
+          <div class="block-title">Activités Lead Dev</div>
+          <ul>
+            <li><strong>Management :</strong> suivi de la montée en compétences, vérification de la qualité du delivery</li>
+            <li><strong>Analyse :</strong> besoins métier en collaboration avec les parties prenantes (backlog groomings)</li>
+            <li><strong>Chiffrage :</strong> estimation des tâches, identification des dépendances et risques</li>
+            <li><strong>PI Planning :</strong> préparation et participation, suivi de l'engagement</li>
+            <li><strong>Back-end :</strong> API REST Java/Spring Boot, batchs Java, Maven, Git, Hibernate, Oracle</li>
+            <li><strong>Front-end :</strong> interfaces Angular, gestion des flux asynchrones avec RxJS</li>
+            <li><strong>Tests :</strong> JUnit, Mockito, MockServer, Cucumber (Popete), Postman</li>
+            <li><strong>DevOps :</strong> mise en place CI/CD, Concourse, Docker, Kubernetes</li>
+            <li><strong>Code review :</strong> merge requests GitLab, peer programming, SonarQube</li>
+            <li><strong>Cérémonies :</strong> daily, démo, sprint planning, reviews, rétrospectives, Jira</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="block full">
+        <div class="block-title">Environnement technique</div>
+        <div class="stack-grid">
+          <span class="stag stag-java">Java 8</span>
+          <span class="stag stag-java">Java 11</span>
+          <span class="stag stag-java">Java 17</span>
+          <span class="stag stag-spring">Spring Boot</span>
+          <span class="stag stag-spring">Spring Batch</span>
+          <span class="stag stag-spring">Maven</span>
+          <span class="stag stag-spring">Hibernate</span>
+          <span class="stag stag-spring">REST</span>
+          <span class="stag stag-spring">Swagger</span>
+          <span class="stag stag-front">Angular 8/9</span>
+          <span class="stag stag-front">RxJS</span>
+          <span class="stag stag-front">TypeScript</span>
+          <span class="stag stag-db">Oracle</span>
+          <span class="stag stag-db">SQL</span>
+          <span class="stag stag-devops">Git / GitLab</span>
+          <span class="stag stag-devops">Jenkins</span>
+          <span class="stag stag-devops">Concourse</span>
+          <span class="stag stag-devops">Docker</span>
+          <span class="stag stag-devops">Kubernetes</span>
+          <span class="stag stag-devops">WebLogic</span>
+          <span class="stag stag-test">JUnit</span>
+          <span class="stag stag-test">Mockito</span>
+          <span class="stag stag-test">Cypress</span>
+          <span class="stag stag-test">Cucumber</span>
+          <span class="stag stag-test">Postman</span>
+          <span class="stag stag-test">SonarQube</span>
+          <span class="stag stag-other">Jira</span>
+          <span class="stag stag-other">HP ALM</span>
+          <span class="stag stag-method">Scrum</span>
+ 

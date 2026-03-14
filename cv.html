@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CV – Thomas Quenault</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --dark:   #0d1b2a;
+    --dark2:  #112032;
+    --blue:   #2d6be4;
+    --blue-l: #deeafc;
+    --blue-t: #1a4fae;
+    --white:  #ffffff;
+    --muted:  #7a96b5;
+    --text:   #1c2b3a;
+    --sub:    #4a5e72;
+    --border: #dde6f0;
+    --off:    #f5f8fc;
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: #dce4ef;
+    display: flex;
+    justify-content: center;
+    padding: 40px 20px;
+    min-height: 100vh;
+  }
+
+  .page {
+    width: 210mm;
+    background: var(--white);
+    display: grid;
+    grid-template-columns: 66mm 1fr;
+    box-shadow: 0 24px 64px rgba(0,0,0,0.22);
+  }
+
+  /* ── SIDEBAR ── */
+  .sidebar { background: var(--dark); display: flex; flex-direction: column; }
+
+  .sidebar-top {
+    background: var(--dark2);
+    padding: 32px 22px 26px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .initials {
+    width: 52px; height: 52px; border-radius: 12px;
+    background: rgba(45,107,228,0.2);
+    border: 1.5px solid rgba(45,107,228,0.45);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'DM Serif Display', serif;
+    font-size: 18px; color: #7eb4f7;
+    margin-bottom: 16px; letter-spacing: 1px;
+  }
+
+  .s-name {
+    font-family: 'DM Serif Display', serif;
+    font-size: 24px; line-height: 1.15;
+    color: var(--white); margin-bottom: 7px;
+  }
+
+  .s-title {
+    font-size: 10px; color: var(--muted);
+    text-transform: uppercase; letter-spacing: 1.4px; line-height: 1.6;
+  }
+
+  .sidebar-body { padding: 22px 22px 36px; display: flex; flex-direction: column; gap: 20px; flex: 1; }
+
+  .s-label {
+    font-size: 9px; font-weight: 500;
+    text-transform: uppercase; letter-spacing: 2px;
+    color: var(--blue); margin-bottom: 11px;
+  }
+
+  .contact-item { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 7px; }
+  .contact-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--blue); margin-top: 5px; flex-shrink: 0; }
+  .contact-item span { font-size: 11px; color: var(--muted); line-height: 1.5; }
+
+  .skill-item { margin-bottom: 9px; }
+  .skill-name { font-size: 11px; color: #aec3d8; margin-bottom: 4px; }
+  .skill-track { height: 3px; background: rgba(255,255,255,0.07); border-radius: 3px; overflow: hidden; }
+  .skill-fill { height: 3px; background: var(--blue); border-radius: 3px; }
+
+  .lang-row { display: flex; justify-content: space-between; font-size: 11px; color: #aec3d8; margin-bottom: 7px; }
+  .lang-level { color: var(--blue); font-size: 10px; }
+
+  .edu-item { margin-bottom: 13px; }
+  .edu-degree { font-size: 11px; color: #c8d8ea; line-height: 1.45; }
+  .edu-meta { font-size: 10px; color: var(--muted); margin-top: 2px; font-style: italic; }
+
+  .s-divider { height: 1px; background: rgba(255,255,255,0.06); margin: 2px 0; }
+
+  /* ── MAIN ── */
+  .main { padding: 32px 28px 40px; display: flex; flex-direction: column; }
+
+  .profile-block {
+    border-left: 3px solid var(--blue);
+    padding-left: 14px; margin-bottom: 24px;
+  }
+  .profile-block p { font-size: 12px; color: var(--sub); line-height: 1.65; font-style: italic; }
+
+  .section-title {
+    font-size: 9px; font-weight: 500;
+    text-transform: uppercase; letter-spacing: 2px;
+    color: var(--blue);
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 16px; margin-top: 20px;
+  }
+  .section-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+  .exp-item {
+    padding-left: 14px;
+    border-left: 2px solid var(--border);
+    position: relative; margin-bottom: 18px;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+  .exp-item::before {
+    content: ''; position: absolute; left: -4px; top: 6px;
+    width: 6px; height: 6px; border-radius: 50%; background: var(--blue);
+  }
+  .exp-item.current::before { box-shadow: 0 0 0 3px var(--blue-l); }
+
+  .exp-role { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 2px; }
+  .exp-company { font-size: 11.5px; color: var(--blue); font-weight: 500; margin-bottom: 2px; }
+  .exp-period { font-size: 10.5px; color: var(--muted); font-style: italic; margin-bottom: 7px; }
+  .exp-desc { font-size: 11.5px; color: var(--sub); line-height: 1.6; margin-bottom: 7px; }
+
+  .project-box {
+    background: var(--off); border: 1px solid var(--border);
+    border-radius: 8px; padding: 11px 14px; margin-bottom: 8px;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+  .project-name { font-size: 12px; font-weight: 500; color: var(--text); margin-bottom: 4px; }
+  .project-sub { font-size: 11px; color: var(--sub); line-height: 1.55; margin-bottom: 8px; }
+
+  .tags { display: flex; flex-wrap: wrap; gap: 4px; }
+  .tag {
+    font-size: 9.5px; font-weight: 500; padding: 2px 8px;
+    border-radius: 20px; background: var(--blue-l); color: var(--blue-t);
+    letter-spacing: 0.3px;
+  }
+
+  .mini-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 20px; }
+  .mini-role { font-size: 11.5px; font-weight: 500; color: var(--text); }
+  .mini-company { font-size: 11px; color: var(--blue); }
+  .mini-period { font-size: 10px; color: var(--muted); font-style: italic; }
+
+  @media print {
+    body { background: none; padding: 0; margin: 0; }
+    .page { box-shadow: none; width: 100%; margin: 0; }
+    * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+    @page { margin: 0; size: A4; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ══ SIDEBAR ══ -->
+  <aside class="sidebar">
+    <div class="sidebar-top">
+      <div class="initials">TQ</div>
+      <div class="s-name">Thomas<br>Quenault</div>
+      <div class="s-title">Ingénieur études<br>& développement</div>
+    </div>
+
+    <div class="sidebar-body">
+      <div>
+        <div class="s-label">Contact</div>
+        <div class="contact-item"><div class="contact-dot"></div><span>06 68 35 11 08</span></div>
+        <div class="contact-item"><div class="contact-dot"></div><span><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="90e1e5f5fef1e5fce4bee4f8fffdf1e3d0f7fdf1f9fcbef3fffd">[email&#160;protected]</a></span></div>
+      </div>
+
+      <div class="s-divider"></div>
+
+      <div>
+        <div class="s-label">Compétences</div>
+        <div class="skill-item"><div class="skill-name">Java 17 / 21</div><div class="skill-track"><div class="skill-fill" style="width:92%"></div></div></div>
+        <div class="skill-item"><div class="skill-name">Spring Boot 3</div><div class="skill-track"><div class="skill-fill" style="width:90%"></div></div></div>
+        <div class="skill-item"><div class="skill-name">JPA / Hibernate</div><div class="skill-track"><div class="skill-fill" style="width:84%"></div></div></div>
+        <div class="skill-item"><div class="skill-name">PostgreSQL / SQL</div><div class="skill-track"><div class="skill-fill" style="width:80%"></div></div></div>
+        <div class="skill-item"><div class="skill-name">Angular 8</div><div class="skill-track"><div class="skill-fill" style="width:68%"></div></div></div>
+        <div class="skill-item"><div class="skill-name">Git CI / Sonar</div><div class="skill-track"><div class="skill-fill" style="width:82%"></div></div></div>
+        <div class="skill-item"><div class="skill-name">WebLogic</div><div class="skill-track"><div class="skill-fill" style="width:65%"></div></div></div>
+        <div class="skill-item"><div class="skill-name">Scrum / Agile</div><div class="skill-track"><div class="skill-fill" style="width:88%"></div></div></div>
+      </div>
+
+      <div class="s-divider"></div>
+
+      <div>
+        <div class="s-label">Langues</div>
+        <div class="lang-row"><span>Français</span><span class="lang-level">Natif</span></div>
+        <div class="lang-row"><span>Anglais</span><span class="lang-level">Professionnel</span></div>
+        <div class="lang-row"><span>Allemand</span><span class="lang-level">Notions</span></div>
+      </div>
+
+      <div class="s-divider"></div>
+
+      <div>
+        <div class="s-label">Formation</div>
+        <div class="edu-item">
+          <div class="edu-degree">Formation Professionnelle – Informatique</div>
+          <div class="edu-meta">Adaming · 2016</div>
+        </div>
+        <div class="edu-item">
+          <div class="edu-degree">Master 2 – Audit et performances énergétiques</div>
+          <div class="edu-meta">Univ. Bretagne Sud · 2013–2016</div>
+        </div>
+        <div class="edu-item">
+          <div class="edu-degree">Licence – Sciences pour l'ingénieur</div>
+          <div class="edu-meta">Univ. Bretagne Sud · 2013–2014</div>
+        </div>
+        <div class="edu-item">
+          <div class="edu-degree">DUT Génie Thermique et Énergie</div>
+          <div class="edu-meta">Univ. de Nantes · 2011–2013</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ══ MAIN ══ -->
+  <main class="main">
+
+    <div class="profile-block">
+      <p>Ingénieur développeur Back-End avec 9+ ans d'expérience en Java / Spring Boot. Intervenant sur des projets critiques dans les secteurs bancaire, public et réglementaire. Reconversion réussie depuis l'ingénierie énergétique vers le développement logiciel.</p>
+    </div>
+
+    <div class="section-title">Expérience professionnelle</div>
+
+    <!-- RECE – en cours -->
+    <div class="exp-item current">
+      <div class="exp-role">Ingénieur études & développement Back-End</div>
+      <div class="exp-company">Catamania – mission Ministère des Affaires étrangères</div>
+      <div class="exp-period">Avr. 2026 – Présent</div>
+      <div class="project-box">
+        <div class="project-name">Projet RECE – Référentiel Électronique d'État Civil</div>
+        <div class="project-sub">Développement back-end d'une application de gestion numérique des actes d'état civil pour le Ministère de l'Europe et des Affaires étrangères. L'application vise à centraliser et sécuriser les données d'état civil des ressortissants français à l'étranger, en assurant leur intégrité et leur traçabilité.</div>
+        <div class="tags">
+          <span class="tag">Java 17</span><span class="tag">Spring Boot 3</span>
+          <span class="tag">PostgreSQL</span><span class="tag">Git CI</span><span class="tag">Sonar</span><span class="tag">Scrum</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- CSRD -->
+    <div class="exp-item">
+      <div class="exp-role">Ingénieur études & développement Back-End</div>
+      <div class="exp-company">Catamania – mission SIGMA Informatique</div>
+      <div class="exp-period">Janv. 2025 – Avr. 2026</div>
+      <div class="project-box">
+        <div class="project-name">Projet CSRD – Double matérialité</div>
+        <div class="project-sub">Développement back-end d'une application permettant d'établir la double matérialité d'une entreprise afin de prioriser le contenu du formulaire CSRD (Corporate Sustainability Reporting Directive).</div>
+        <div class="tags">
+          <span class="tag">Java 21</span><span class="tag">Spring Boot 3</span>
+          <span class="tag">PostgreSQL</span><span class="tag">Git CI</span><span class="tag">Sonar</span><span class="tag">Kanban</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sigma / SG -->
+    <div class="exp-item">
+      <div class="exp-role">Ingénieur études & développement Fullstack</div>
+      <div class="exp-company">Catamania – mission Société Générale</div>
+      <div class="exp-period">Janv. 2022 – Janv. 2025 · 3 ans</div>
+      <div class="project-box">
+        <div class="project-name">Mission bancaire – Société Générale</div>
+        <div class="project-sub">Développement et maintenance sur deux applications critiques dans un contexte de conformité fiscale internationale :</div>
+        <br>
+        <div class="project-sub"><strong style="color: var(--text);">TPRQI</strong> – Génération automatisée du formulaire fiscal 1042-S à destination de l'administration fiscale américaine (IRS). L'application traite les revenus de source américaine (actifs et titres en dollar) versés à des bénéficiaires étrangers, en assurant la conformité avec les obligations de reporting FATCA.</div>
+        <br>
+        <div class="project-sub"><strong style="color: var(--text);">T-REX</strong> – Application de gestion des dossiers de récupération de taxes (withholding tax reclaim). Suite à la déclaration des informations clients, l'outil pilote l'ensemble du processus de remboursement des retenues à la source indûment prélevées auprès des autorités fiscales étrangères.</div>
+        <div class="tags">
+          <span class="tag">Java</span><span class="tag">Spring Boot</span>
+          <span class="tag">Microservices</span><span class="tag">Docker</span><span class="tag">Scrum</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sopra PASRAU -->
+    <div class="exp-item">
+      <div class="exp-role">Ingénieur études & développement Fullstack</div>
+      <div class="exp-company">Sopra Steria – mission GIP MDS</div>
+      <div class="exp-period">Avr. – Déc. 2021 · 9 mois</div>
+      <div class="project-box">
+        <div class="project-name">Projet PASRAU</div>
+        <div class="project-sub">Développement sur le projet de prélèvement à la source des agents publics (PASRAU). Intégration avec les systèmes d'information de l'État.</div>
+        <div class="tags"><span class="tag">Java</span><span class="tag">Spring Batch</span></div>
+      </div>
+    </div>
+
+    <!-- Sopra Pôle Emploi -->
+    <div class="exp-item">
+      <div class="exp-role">Ingénieur études & développement Fullstack</div>
+      <div class="exp-company">Sopra Steria – mission Pôle Emploi</div>
+      <div class="exp-period">Déc. 2016 – Avr. 2021 · 4 ans 5 mois</div>
+      <div class="project-box">
+        <div class="project-name">Mission secteur public – Pôle Emploi</div>
+        <div class="project-sub">Développement sur deux projets majeurs au sein de Pôle Emploi :</div>
+        <br>
+        <div class="project-sub"><strong style="color: var(--text);">DUNE Offres</strong> (2016–2019) – Application de gestion des offres d'emploi : création, recherche, mise en relation entre entreprises et demandeurs d'emploi. Rôle de <em>référent technique</em> sur le projet, garant des bonnes pratiques et interlocuteur privilégié sur les sujets d'architecture et de développement.</div>
+        <br>
+        <div class="project-sub"><strong style="color: var(--text);">MARS – Mon Assistant de Recouvrement Simplifié</strong> (2019–2021) – Refonte complète d'une application legacy en COBOL vers une stack moderne Java 17 / Angular 9. Rôle de <em>Lead Developer</em> : pilotage technique de l'équipe, choix d'architecture, revues de code et coordination avec les équipes métier.</div>
+        <div class="tags"><span class="tag">Java 8/11/17</span><span class="tag">Angular</span><span class="tag">Jenkins</span><span class="tag">Sonar</span><span class="tag">WebLogic</span><span class="tag">Docker</span><span class="tag">Cypress</span><span class="tag">Kubernetes</span><s

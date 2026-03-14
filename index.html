@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Thomas Quenault – Ingénieur Études & Développement Java / Spring Boot – Portfolio & CV">
+<title>Thomas Quenault · Ingénieur Développement</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --dark:    #0d1b2a;
+    --dark2:   #112032;
+    --blue:    #2d6be4;
+    --blue-l:  #deeafc;
+    --blue-t:  #1a4fae;
+    --white:   #ffffff;
+    --muted:   #7a96b5;
+    --text:    #1c2b3a;
+    --sub:     #4a5e72;
+    --border:  #dde6f0;
+    --bg:      #f4f7fb;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    background: var(--dark);
+    position: relative;
+    overflow: hidden;
+    padding: 0;
+  }
+
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1fr 420px;
+    min-height: 100vh;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 48px;
+    align-items: center;
+    gap: 60px;
+  }
+
+  /* Decorative circles */
+  .hero::before {
+    content: '';
+    position: absolute; top: -120px; right: -120px;
+    width: 500px; height: 500px; border-radius: 50%;
+    border: 1px solid rgba(45,107,228,0.12);
+    pointer-events: none;
+  }
+  .hero::after {
+    content: '';
+    position: absolute; bottom: -80px; left: 30%;
+    width: 300px; height: 300px; border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.04);
+    pointer-events: none;
+  }
+
+  .hero-left { position: relative; z-index: 1; }
+
+  .hero-eyebrow {
+    font-size: 11px; font-weight: 500;
+    text-transform: uppercase; letter-spacing: 3px;
+    color: #5fa0e0; margin-bottom: 24px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .hero-eyebrow::before {
+    content: ''; width: 32px; height: 1px; background: #5fa0e0;
+  }
+
+  .hero-name {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(48px, 6vw, 72px);
+    line-height: 1.05; color: var(--white);
+    margin-bottom: 20px;
+  }
+  .hero-name em {
+    font-style: italic; color: #7eb4f7;
+  }
+
+  .hero-title {
+    font-size: 18px; color: #8ab4d8;
+    font-weight: 300; margin-bottom: 32px;
+    line-height: 1.6;
+  }
+
+  .hero-desc {
+    font-size: 14px; color: #5a7a99;
+    line-height: 1.75; max-width: 480px;
+    margin-bottom: 48px;
+  }
+
+  .hero-actions {
+    display: flex; gap: 14px; flex-wrap: wrap;
+  }
+
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 13px 26px; border-radius: 8px;
+    font-size: 13px; font-weight: 500;
+    text-decoration: none; transition: all .2s;
+    cursor: pointer; border: none;
+  }
+  .btn-primary {
+    background: var(--blue); color: var(--white);
+  }
+  .btn-primary:hover { background: #1a4fae; transform: translateY(-1px); }
+  .btn-outline {
+    background: transparent;
+    color: #8ab4d8;
+    border: 1px solid rgba(138,180,216,0.3);
+  }
+  .btn-outline:hover {
+    background: rgba(45,107,228,0.1);
+    border-color: var(--blue); color: var(--white);
+  }
+
+  /* ── HERO RIGHT: CARD ── */
+  .hero-card {
+    background: #112032;
+    border: 1px solid rgba(45,107,228,0.2);
+    border-radius: 16px;
+    padding: 32px;
+    position: relative; z-index: 1;
+    animation: fadeUp .6s ease both;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .card-initials {
+    width: 56px; height: 56px; border-radius: 14px;
+    background: rgba(45,107,228,0.2);
+    border: 1.5px solid rgba(45,107,228,0.4);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'DM Serif Display', serif;
+    font-size: 20px; color: #7eb4f7;
+    margin-bottom: 20px;
+  }
+
+  .card-section {
+    margin-bottom: 24px;
+  }
+  .card-label {
+    font-size: 9px; font-weight: 500;
+    text-transform: uppercase; letter-spacing: 2px;
+    color: var(--blue); margin-bottom: 10px;
+  }
+  .card-item {
+    display: flex; align-items: center; gap: 8px;
+    margin-bottom: 7px;
+  }
+  .card-dot {
+    width: 4px; height: 4px; border-radius: 50%;
+    background: var(--blue); flex-shrink: 0;
+  }
+  .card-item span { font-size: 12px; color: #7a96b5; }
+
+  .skill-row { margin-bottom: 8px; }
+  .skill-label { font-size: 11px; color: #aec3d8; margin-bottom: 3px; }
+  .skill-track { height: 2px; background: rgba(255,255,255,0.07); border-radius: 2px; overflow: hidden; }
+  .skill-fill { height: 2px; background: var(--blue); border-radius: 2px; transition: width 1s ease; }
+
+  .card-divider { height: 1px; background: rgba(255,255,255,0.06); margin: 16px 0; }
+
+  /* ── SCROLL INDICATOR ── */
+  .scroll-hint {
+    position: absolute; bottom: 32px; left: 50%;
+    transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+    font-size: 10px; color: #3a5a75;
+    text-transform: uppercase; letter-spacing: 2px;
+    animation: bounce 2s infinite;
+  }
+  .scroll-hint svg { opacity: .5; }
+  @keyframes bounce {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50% { transform: translateX(-50%) translateY(6px); }
+  }
+
+  /* ── DOCUMENTS SECTION ── */
+  .section {
+    max-width: 1200px; margin: 0 auto;
+    padding: 80px 48px;
+  }
+
+  .section-eyebrow {
+    font-size: 10px; font-weight: 500;
+    text-transform: uppercase; letter-spacing: 3px;
+    color: var(--blue); margin-bottom: 12px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .section-eyebrow::before { content: ''; width: 24px; height: 1px; background: var(--blue); }
+
+  .section-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 36px; color: var(--text);
+    margin-bottom: 48px; line-height: 1.2;
+  }
+
+  .docs-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+
+  .doc-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 36px;
+    text-decoration: none;
+    color: inherit;
+    display: flex; flex-direction: column;
+    transition: all .25s;
+    position: relative; overflow: hidden;
+  }
+  .doc-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0;
+    height: 3px; background: var(--blue);
+    transform: scaleX(0); transform-origin: left;
+    transition: transform .3s ease;
+  }
+  .doc-card:hover { transform: translateY(-4px); box-shadow: 0 16px 48px rgba(45,107,228,0.12); }
+  .doc-card:hover::before { transform: scaleX(1); }
+
+  .doc-icon {
+    width: 48px; height: 48px; border-radius: 12px;
+    background: var(--blue-l);
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 24px;
+  }
+  .doc-icon svg { width: 22px; height: 22px; }
+
+  .doc-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px; color: var(--text);
+    margin-bottom: 8px;
+  }
+  .doc-sub {
+    font-size: 13px; color: var(--sub);
+    line-height: 1.6; margin-bottom: 24px; flex: 1;
+  }
+
+  .doc-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 28px; }
+  .doc-tag {
+    font-size: 10px; font-weight: 500;
+    padding: 3px 10px; border-radius: 20px;
+    background: var(--blue-l); color: var(--blue-t);
+  }
+
+  .doc-link {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 13px; font-weight: 500; color: var(--blue);
+    text-decoration: none;
+  }
+  .doc-link svg { transition: transform .2s; }
+  .doc-card:hover .doc-link svg { transform: translateX(4px); }
+
+  /* ── STACK SECTION ── */
+  .stack-section {
+    background: var(--dark);
+    padding: 72px 0;
+  }
+  .stack-inner {
+    max-width: 1200px; margin: 0 auto; padding: 0 48px;
+  }
+  .stack-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 28px; color: var(--white);
+    margin-bottom: 40px; text-align: center;
+  }
+  .stack-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+  }
+  .stack-item {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 10px;
+    padding: 16px 12px;
+    text-align: center;
+    transition: all .2s;
+  }
+  .stack-item:hover {
+    background: rgba(45,107,228,0.15);
+    border-color: rgba(45,107,228,0.3);
+  }
+  .stack-item-name { font-size: 12px; color: #aec3d8; font-weight: 400; }
+  .stack-item-cat { font-size: 9px; color: #3a5a75; text-transform: uppercase; letter-spacing: 1px; margin-top: 3px; }
+
+  /* ── EXPERIENCE TIMELINE ── */
+  .timeline { position: relative; padding-left: 24px; }
+  .timeline::before {
+    content: ''; position: absolute;
+    left: 0; top: 8px; bottom: 8px;
+    width: 2px; background: var(--border);
+  }
+  .tl-item { position: relative; margin-bottom: 32px; }
+  .tl-item::before {
+    content: ''; position: absolute;
+    left: -28px; top: 6px;
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--blue);
+    box-shadow: 0 0 0 3px var(--blue-l);
+  }
+  .tl-period { font-size: 10px; color: var(--muted); font-style: italic; margin-bottom: 4px; }
+  .tl-role { font-size: 14px; font-weight: 500; color: var(--text); margin-bottom: 2px; }
+  .tl-company { font-size: 12px; color: var(--blue); }
+  .tl-project { font-size: 12px; color: var(--sub); margin-top: 4px; }
+
+  /* ── CONTACT SECTION ── */
+  .contact-section {
+    background: var(--white);
+    border-top: 1px solid var(--border);
+  }
+  .contact-inner {
+    max-width: 1200px; margin: 0 auto;
+    padding: 72px 48px;
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 60px; align-items: center;
+  }
+  .contact-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 36px; color: var(--text);
+    margin-bottom: 16px;
+  }
+  .contact-sub { font-size: 14px; color: var(--sub); line-height: 1.7; margin-bottom: 32px; }
+  .contact-items { display: flex; flex-direction: column; gap: 16px; }
+  .contact-item {
+    display: flex; align-items: center; gap: 14px;
+  }
+  .contact-ico {
+    width: 40px; height: 40px; border-radius: 10px;
+    background: var(--blue-l);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .contact-ico svg { width: 18px; height: 18px; }
+  .contact-item-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
+  .contact-item-val { font-size: 14px; color: var(--text); font-weight: 400; }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--dark);
+    padding: 24px 48px;
+    text-align: center;
+    font-size: 11px; color: #2a4a64;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    .hero-grid { grid-template-columns: 1fr; padding: 60px 24px; min-height: auto; gap: 40px; }
+    .hero-card { display: none; }
+    .docs-grid { grid-template-columns: 1fr; }
+    .contact-inner { grid-template-columns: 1fr; }
+    .section { padding: 60px 24px; }
+    .stack-inner { padding: 0 24px; }
+    footer { padding: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══ HERO ══ -->
+<section class="hero">
+  <div class="hero-grid">
+
+    <div class="hero-left">
+      <div class="hero-eyebrow">Disponible · Île-de-France & Remote</div>
+      <h1 class="hero-name">Thomas<br><em>Quenault</em></h1>
+      <p class="hero-title">Ingénieur Études & Développement<br>Java · Spring Boot · Back-End / Fullstack</p>
+      <p class="hero-desc">
+        9+ ans d'expérience sur des projets critiques dans les secteurs bancaire, public et réglementaire.
+        Lead Developer confirmé, spécialisé en architecture microservices et développement Back-End Java.
+        Reconversion réussie depuis l'ingénierie énergétique.
+      </p>
+      <div class="hero-actions">
+        <a href="cv.html" class="btn btn-primary">
+          <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+          Voir le CV
+        </a>
+        <a href="competences.html" class="btn btn-outline">
+          <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+          Dossier de compétences
+        </a>
+        <a href="mailto:quenault.thomas@gmail.com" class="btn btn-outline">
+          <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+          Me contacter
+        </a>
+      </div>
+    </div>
+
+    <div class="hero-card">
+      <div class="card-initials">TQ</div>
+
+      <div class="card-section">
+        <div class="card-label">Contact</div>
+        <div class="card-item"><div class="card-dot"></div><span>06 68 35 11 08</span></div>
+        <div class="card-item"><div class="card-dot"></div><span>quenault.thomas@gmail.com</span></div>
+      </div>
+
+      <div class="card-divider"></div>
+
+      <div class="card-section">
+        <div class="card-label">Compétences clés</div>
+        <div class="skill-row"><div class="skill-label">Java 17 / 21</div><div class="skill-track"><div class="skill-fill" style="width:92%"></div></div></div>
+        <div class="skill-row"><div class="skill-label">Spring Boot 3</div><div class="skill-track"><div class="skill-fill" style="width:90%"></div></div></div>
+        <div class="skill-row"><div class="skill-label">PostgreSQL / SQL</div><div class="skill-track"><div class="skill-fill" style="width:80%"></div></div></div>
+        <div class="skill-row"><div class="skill-label">Docker / Kubernetes</div><div class="skill-track"><div class="skill-fill" style="width:75%"></div></div></div>
+        <div class="skill-row"><div class="skill-label">Angular</div><div class="skill-track"><div class="skill-fill" style="width:68%"></div></div></div>
+        <div class="skill-row"><div class="skill-label">Scrum / Agile</div><div class="skill-track"><div class="skill-fill" style="width:88%"></div></div></div>
+      </div>
+
+      <div class="card-divider"></div>
+
+      <div class="card-section" style="margin-bottom:0">
+        <div class="card-label">Disponibilité</div>
+        <div class="card-item"><div class="card-dot"></div><span style="color:#4ade80">Ouvert aux opportunités</span></div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="scroll-hint">
+    <span>Découvrir</span>
+    <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg>
+  </div>
+</section>
+
+<!-- ══ DOCUMENTS ══ -->
+<section class="section">
+  <div class="section-eyebrow">Documents</div>
+  <h2 class="section-title">CV & Dossier de compétences</h2>
+
+  <div class="docs-grid">
+    <a href="cv.html" class="doc-card">
+      <div class="doc-icon">
+        <svg fill="none" viewBox="0 0 24 24" stroke="#2d6be4" stroke-width="1.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+        </svg>
+      </div>
+      <div class="doc-title">Curriculum Vitæ</div>
+      <p class="doc-sub">
+        Parcours professionnel complet, formation et compétences techniques.
+        Présentation synthétique et moderne de 9+ ans d'expérience en développement logiciel.
+      </p>
+      <div class="doc-tags">
+        <span class="doc-tag">Expériences</span>
+        <span class="doc-tag">Formation</span>
+        <span class="doc-tag">Compétences</span>
+        <span class="doc-tag">Stack technique</span>
+      </div>
+      <span class="doc-link">
+        Consulter le CV
+        <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+      </span>
+    </a>
+
+    <a href="competences.html" class="doc-card">
+      <div class="doc-icon">
+        <svg fill="none" viewBox="0 0 24 24" stroke="#2d6be4" stroke-width="1.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+        </svg>
+      </div>
+      <div class="doc-title">Dossier de compétences</div>
+      <p class="doc-sub">
+        Détail approfondi de chaque mission : contexte métier, rôle, activités réalisées
+        et environnement technique complet projet par projet.
+      </p>
+      <div class="doc-tags">
+        <span class="doc-tag">Détail des projets</span>
+        <span class="doc-tag">Rôles</span>
+        <span class="doc-tag">Stack par mission</span>
+        <span class="doc-tag">Contexte métier</span>
+      </div>
+      <span class="doc-link">
+        Consulter le dossier
+        <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+      </span>
+    </a>
+  </div>
+</section>
+
+<!-- ══ STACK ══ -->
+<div class="stack-section">
+  <div class="stack-inner">
+    <h3 class="stack-title">Stack technique</h3>
+    <div class="stack-grid">
+      <div class="stack-item"><div class="stack-item-name">Java 17/21</div><div class="stack-item-cat">Back-End</div></div>
+      <div class="stack-item"><div class="stack-item-name">Spring Boot 3</div><div class="stack-item-cat">Back-End</div></div>
+      <div class="stack-item"><div class="stack-item-name">Spring Batch</div><div class="stack-item-cat">Back-End</div></div>
+      <div class="stack-item"><div class="stack-item-name">Microservices</div><div class="stack-item-cat">Architecture</div></div>
+      <div class="stack-item"><div class="stack-item-name">RabbitMQ</div><div class="stack-item-cat">Messaging</div></div>
+      <div class="stack-item"><div class="stack-item-name">Angular</div><div class="stack-item-cat">Front-End</div></div>
+      <div class="stack-item"><div class="stack-item-name">PostgreSQL</div><div class="stack-item-cat">Base de données</div></div>
+      <div class="stack-item"><div class="stack-item-name">Oracle</div><div class="stack-item-cat">Base de données</div></div>
+      <div class="stack-item"><div class="stack-item-name">Docker</div><div class="stack-item-cat">DevOps</div></div>
+      <div class="stack-item"><div class="stack-item-name">Kubernetes</div><div class="stack-item-cat">DevOps</div></div>
+      <div class="stack-item"><div class="stack-item-name">Jenkins</div><div class="stack-item-cat">CI/CD</div></div>
+      <div class="stack-item"><div class="stack-item-name">SonarQube</div><div class="stack-item-cat">Qualité</div></div>
+      <div class="stack-item"><div class="stack-item-name">JUnit / Mockito</div><div class="stack-item-cat">Tests</div></div>
+      <div class="stack-item"><div class="stack-item-name">Git / GitLab</div><div class="stack-item-cat">Versioning</div></div>
+      <div class="stack-item"><div class="stack-item-name">Scrum / SAFe</div><div class="stack-item-cat">Méthodes</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ EXPÉRIENCE ══ -->
+<section class="section">
+  <div class="section-eyebrow">Parcours</div>
+  <h2 class="section-title">Expériences récentes</h2>
+
+  <div class="timeline">
+    <div class="tl-item">
+      <div class="tl-period">Avr. 2026 – Présent</div>
+      <div class="tl-role">Ingénieur études & développement Back-End</div>
+      <div class="tl-company">Catamania · mission Ministère des Affaires étrangères</div>
+      <div class="tl-project">Projet RECE – Référentiel Électronique d'État Civil</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-period">Janv. 2025 – Avr. 2026</div>
+      <div class="tl-role">Ingénieur études & développement Back-End</div>
+      <div class="tl-company">Catamania · mission SIGMA Informatique</div>
+      <div class="tl-project">Projet CSRD – Double matérialité (reporting durabilité)</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-period">Janv. 2022 – Janv. 2025 · 3 ans</div>
+      <div class="tl-role">Ingénieur études & développement Fullstack</div>
+      <div class="tl-company">Catamania · mission Société Générale (SGSS)</div>
+      <div class="tl-project">Applications fiscales TPRQI & T-REX – conformité FATCA/IRS</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-period">Déc. 2016 – Avr. 2021 · 4 ans 5 mois</div>
+      <div class="tl-role">Lead Developer · Référent technique</div>
+      <div class="tl-company">Sopra Steria · mission Pôle Emploi</div>
+      <div class="tl-project">DUNE Offres & MARS – refonte COBOL → Java 17 / Angular 9</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ CONTACT ══ -->
+<div class="contact-section">
+  <div class="contact-inner">
+    <div>
+      <h2 class="contact-title">Prenons contact</h2>
+      <p class="contact-sub">
+        Ouvert aux opportunités en CDI, freelance ou mission de prestation.
+        N'hésitez pas à me contacter pour discuter de vos projets.
+      </p>
+      <a href="mailto:quenault.thomas@gmail.com" class="btn btn-primary">
+        <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+        Envoyer un email
+      </a>
+    </div>
+    <div class="contact-items">
+      <div class="contact-item">
+        <div class="contact-ico">
+          <svg fill="none" viewBox="0 0 24 24" stroke="#2d6be4" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+        </div>
+        <div>
+          <div class="contact-item-label">Téléphone</div>
+          <div class="contact-item-val">06 68 35 11 08</div>
+        </div>
+      </div>
+      <div class="contact-item">
+        <div class="contact-ico">
+          <svg fill="none" viewBox="0 0 24 24" stroke="#2d6be4" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+        </div>
+        <div>
+          <div class="contact-item-label">Email</div>
+          <div class="contact-item-val">quenault.thomas@gmail.com</div>
+        </div>
+      </div>
+      <div class="contact-item">
+        <div class="contact-ico">
+          <svg fill="none" viewBox="0 0 24 24" stroke="#2d6be4" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+        </div>
+        <div>
+          <div class="contact-item-label">Localisation</div>
+          <div class="contact-item-val">Saint-Herblain (44) · Remote OK</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ FOOTER ══ -->
+<footer>
+  Thomas Quenault · Ingénieur Études & Développement · 2026
+</footer>
+
+</body>
+</html>
