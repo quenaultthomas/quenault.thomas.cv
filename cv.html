@@ -157,7 +157,8 @@
     .page { box-shadow: none; width: 100%; margin: 0; }
     * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
     @page { margin: 0; size: A4; }
-    .back-bar { display: none; }
+    .back-bar { display: none !important; }
+    .print-spacer { display: none !important; }
   }
 </style>
 </head>
@@ -173,7 +174,7 @@
     Imprimer / PDF
   </button>
 </div>
-<div style="height:44px;"></div>
+<div class="print-spacer" style="height:44px;"></div>
 <div class="page">
 
   <!-- ══ SIDEBAR ══ -->

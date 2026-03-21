@@ -245,13 +245,13 @@
   /* ── PRINT ── */
   @media print {
     body { background: none; }
-    .toc { display: none; }
+    .toc { display: none !important; }
     .content { padding: 32px 24px; }
     * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
     @page { margin: 12mm; size: A4; }
     .project { page-break-inside: avoid; break-inside: avoid; }
     .block { page-break-inside: avoid; break-inside: avoid; }
-    .back-bar { display: none; }
+    .back-bar { display: none !important; }
   }
 </style>
 </head>
