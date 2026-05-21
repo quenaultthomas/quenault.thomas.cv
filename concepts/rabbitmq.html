@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RabbitMQ – Thomas Quenault</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+  :root { --dark:#0d1b2a; --blue:#2d6be4; --blue-l:#deeafc; --blue-t:#1a4fae; --white:#ffffff; --muted:#7a96b5; --text:#1c2b3a; --sub:#4a5e72; --border:#dde6f0; --bg:#f4f7fb; --orange:#ea580c; --orange-l:#fff7ed; }
+  body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text); line-height:1.7; }
+  .topbar { position:sticky; top:0; z-index:100; background:var(--dark); padding:12px 40px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid rgba(255,255,255,0.06); }
+  .topbar a { display:inline-flex; align-items:center; gap:8px; text-decoration:none; color:#7a96b5; font-size:13px; font-weight:500; }
+  .topbar a:hover { color:#fff; }
+  .topbar-title { font-size:13px; color:#3a5a75; }
+  .hero { background:var(--dark); padding:56px 40px; }
+  .hero-inner { max-width:800px; margin:0 auto; }
+  .hero-eyebrow { font-size:10px; font-weight:500; text-transform:uppercase; letter-spacing:3px; color:#5fa0e0; margin-bottom:16px; }
+  .hero-title { font-family:'DM Serif Display',serif; font-size:clamp(36px,5vw,52px); color:#fff; line-height:1.1; margin-bottom:16px; }
+  .hero-sub { font-size:16px; color:#7a96b5; line-height:1.6; max-width:560px; }
+  .hero-tags { display:flex; flex-wrap:wrap; gap:8px; margin-top:24px; }
+  .hero-tag { font-size:11px; font-weight:500; padding:4px 12px; border-radius:20px; background:rgba(45,107,228,0.2); color:#7eb4f7; border:1px solid rgba(45,107,228,0.3); }
+  .content { max-width:800px; margin:0 auto; padding:56px 40px; }
+  h2 { font-family:'DM Serif Display',serif; font-size:26px; color:var(--text); margin:48px 0 16px; padding-bottom:12px; border-bottom:2px solid var(--border); }
+  h3 { font-size:16px; font-weight:500; color:var(--text); margin:28px 0 10px; }
+  p { font-size:15px; color:var(--sub); margin-bottom:16px; line-height:1.75; }
+  ul { padding-left:20px; margin-bottom:16px; }
+  ul li { font-size:15px; color:var(--sub); margin-bottom:8px; }
+  ul li strong { color:var(--text); }
+  strong { color:var(--text); }
+  .callout { background:var(--blue-l); border-left:3px solid var(--blue); border-radius:0 8px 8px 0; padding:16px 20px; margin:24px 0; font-size:14px; color:var(--sub); }
+  .callout strong { color:var(--blue-t); }
+  .callout-orange { background:var(--orange-l); border-left:3px solid var(--orange); border-radius:0 8px 8px 0; padding:16px 20px; margin:24px 0; font-size:14px; color:var(--sub); }
+  .callout-orange strong { color:var(--orange); }
+  .schema { background:var(--white); border:1px solid var(--border); border-radius:12px; padding:32px; margin:24px 0; }
+  .schema-title { font-size:11px; font-weight:500; text-transform:uppercase; letter-spacing:2px; color:var(--muted); margin-bottom:24px; text-align:center; }
+  .code { background:#111820; border-radius:10px; padding:20px 24px; margin:20px 0; overflow-x:auto; }
+  .code pre { font-family:'Fira Code',monospace; font-size:13px; line-height:1.7; color:#aec3d8; }
+  .code .kw { color:#7eb4f7; }
+  .code .cl { color:#4ade80; }
+  .code .an { color:#f9a8d4; }
+  .code .cm { color:#4a6a80; font-style:italic; }
+  .code .st { color:#fde68a; }
+  .code .nb { color:#fb923c; }
+  .grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:20px 0; }
+  .card { background:var(--white); border:1px solid var(--border); border-radius:10px; padding:20px; }
+  .card-title { font-size:11px; font-weight:500; text-transform:uppercase; letter-spacing:2px; color:var(--blue); margin-bottom:12px; }
+  .card p { font-size:13px; margin-bottom:0; }
+  .tag-inline { display:inline-block; font-size:11px; font-weight:500; padding:2px 9px; border-radius:20px; background:var(--blue-l); color:var(--blue-t); margin:2px; }
+  .back-link { display:inline-flex; align-items:center; gap:8px; text-decoration:none; color:var(--blue); font-size:14px; font-weight:500; margin-bottom:32px; }
+  .back-link:hover { color:var(--blue-t); }
+  footer { text-align:center; padding:32px; font-size:11px; color:var(--muted); border-top:1px solid var(--border); margin-top:40px; }
+  @media(max-width:640px) { .grid-2 { grid-template-columns:1fr; } .content,.hero { padding:40px 20px; } .topbar { padding:12px 20px; } }
+
+  /* RabbitMQ diagram */
+  .rmq-flow { display:flex; align-items:center; gap:8px; flex-wrap:wrap; justify-content:center; }
+  .rmq-box { padding:10px 16px; border-radius:8px; font-size:12px; font-weight:500; text-align:center; line-height:1.4; }
+  .rmq-producer { background:#eff6ff; color:#1e40af; border:1px solid #bfdbfe; }
+  .rmq-exchange { background:#fef9ec; color:#92400e; border:1px solid #fde68a; }
+  .rmq-queue { background:#ecfdf5; color:#065f46; border:1px solid #a7f3d0; }
+  .rmq-consumer { background:#f5f3ff; color:#5b21b6; border:1px solid #ddd6fe; }
+  .rmq-arrow { font-size:16px; color:var(--muted); }
+  .rmq-binding { font-size:9px; color:var(--orange); text-align:center; font-style:italic; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="../index.html">
+    <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+    Retour au portfolio
+  </a>
+  <span class="topbar-title">Culture technique</span>
+</div>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-eyebrow">Message Broker · Event-Driven</div>
+    <h1 class="hero-title">RabbitMQ</h1>
+    <p class="hero-sub">Broker de messages open source basé sur le protocole AMQP. Permet l'échange asynchrone de messages entre services via des exchanges, queues et bindings.</p>
+    <div class="hero-tags">
+      <span class="hero-tag">AMQP</span>
+      <span class="hero-tag">Exchanges</span>
+      <span class="hero-tag">Queues</span>
+      <span class="hero-tag">Spring AMQP</span>
+      <span class="hero-tag">Asynchrone</span>
+    </div>
+  </div>
+</div>
+
+<div class="content">
+
+  <a href="event-driven.html" class="back-link">
+    <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+    Voir le concept Event-Driven Architecture
+  </a>
+
+  <h2>Qu'est-ce que RabbitMQ ?</h2>
+  <p>RabbitMQ est un <strong>message broker</strong> open source qui implémente le protocole <strong>AMQP</strong> (Advanced Message Queuing Protocol). Il sert d'intermédiaire entre des services qui produisent des messages et ceux qui les consomment.</p>
+  <p>Contrairement à Kafka (conçu pour le streaming de données massif et la rétention longue), RabbitMQ est optimisé pour le <strong>routage intelligent de messages</strong> et la gestion de files d'attente traditionnelles.</p>
+
+  <h2>Les 4 composants fondamentaux</h2>
+
+  <div class="schema">
+    <div class="schema-title">Flux d'un message dans RabbitMQ</div>
+    <div class="rmq-flow">
+      <div>
+        <div class="rmq-box rmq-producer">📤 Producer<br><span style="font-size:10px;">Publie le message</span></div>
+      </div>
+      <div class="rmq-arrow">→</div>
+      <div>
+        <div class="rmq-box rmq-exchange">🔀 Exchange<br><span style="font-size:10px;">Route le message</span></div>
+        <div class="rmq-binding">routing key</div>
+      </div>
+      <div class="rmq-arrow">→</div>
+      <div style="display:flex; flex-direction:column; gap:6px;">
+        <div class="rmq-box rmq-queue">📥 Queue A</div>
+        <div class="rmq-box rmq-queue">📥 Queue B</div>
+      </div>
+      <div class="rmq-arrow">→</div>
+      <div style="display:flex; flex-direction:column; gap:6px;">
+        <div class="rmq-box rmq-consumer">⚙️ Consumer 1</div>
+        <div class="rmq-box rmq-consumer">⚙️ Consumer 2</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">Exchange</div>
+      <p>Reçoit les messages des producteurs et les route vers les queues selon des règles (type d'exchange + routing key). Le producteur ne connaît jamais la queue directement.</p>
+    </div>
+    <div class="card">
+      <div class="card-title">Queue</div>
+      <p>File d'attente qui stocke les messages jusqu'à leur consommation. Peut être durable (persistée sur disque), exclusive ou auto-supprimée.</p>
+    </div>
+    <div class="card">
+      <div class="card-title">Binding</div>
+      <p>Règle qui lie un exchange à une queue, avec une <em>routing key</em> optionnelle. Définit quels messages arrivent dans quelle queue.</p>
+    </div>
+    <div class="card">
+      <div class="card-title">Routing Key</div>
+      <p>Clé utilisée par l'exchange pour router le message vers la bonne queue. Son rôle varie selon le type d'exchange.</p>
+    </div>
+  </div>
+
+  <h2>Les types d'exchanges</h2>
+
+  <h3>Direct Exchange</h3>
+  <p>Route le message vers la queue dont le binding correspond <strong>exactement</strong> à la routing key. Simple et précis.</p>
+  <div class="code">
+    <pre><span class="cm">// Message avec routing key "commande.validee"</span>
+<span class="cm">// → routé vers la queue bindée sur "commande.validee"</span>
+rabbitTemplate.convertAndSend(<span class="st">"exchange.direct"</span>, <span class="st">"commande.validee"</span>, message);</pre>
+  </div>
+
+  <h3>Topic Exchange</h3>
+  <p>Route via des <strong>patterns avec wildcards</strong>. Le plus flexible : <code>*</code> remplace un mot, <code>#</code> remplace zéro ou plusieurs mots.</p>
+  <div class="code">
+    <pre><span class="cm">// Routing key : "commande.france.validee"</span>
+<span class="cm">// Correspond à : "commande.*.*" ou "commande.#" ou "#.validee"</span>
+<span class="cm">// Ne correspond pas à : "commande.validee" (un seul niveau)</span></pre>
+  </div>
+
+  <h3>Fanout Exchange</h3>
+  <p>Envoie une copie du message à <strong>toutes les queues bindées</strong>, sans tenir compte de la routing key. Parfait pour la diffusion (broadcast).</p>
+
+  <h3>Headers Exchange</h3>
+  <p>Route en fonction des <strong>headers du message</strong> plutôt que de la routing key. Rarement utilisé en pratique.</p>
+
+  <h2>Spring AMQP – Intégration Java</h2>
+
+  <h3>Configuration</h3>
+  <div class="code">
+    <pre><span class="an">@Configuration</span>
+<span class="kw">public class</span> <span class="cl">RabbitMQConfig</span> {
+
+    <span class="an">@Bean</span>
+    <span class="kw">public</span> <span class="cl">TopicExchange</span> commandeExchange() {
+        <span class="kw">return new</span> <span class="cl">TopicExchange</span>(<span class="st">"exchange.commandes"</span>);
+    }
+
+    <span class="an">@Bean</span>
+    <span class="kw">public</span> <span class="cl">Queue</span> commandeQueue() {
+        <span class="kw">return</span> <span class="cl">QueueBuilder</span>.durable(<span class="st">"queue.commandes.validation"</span>).build();
+    }
+
+    <span class="an">@Bean</span>
+    <span class="kw">public</span> <span class="cl">Binding</span> binding(<span class="cl">Queue</span> queue, <span class="cl">TopicExchange</span> exchange) {
+        <span class="kw">return</span> <span class="cl">BindingBuilder</span>
+            .bind(queue)
+            .to(exchange)
+            .with(<span class="st">"commande.*.validee"</span>);
+    }
+}</pre>
+  </div>
+
+  <h3>Producteur</h3>
+  <div class="code">
+    <pre><span class="an">@Service</span>
+<span class="kw">public class</span> <span class="cl">CommandeEventPublisher</span> {
+
+    <span class="kw">private final</span> <span class="cl">RabbitTemplate</span> rabbitTemplate;
+
+    <span class="kw">public void</span> publierCommandeValidee(<span class="cl">CommandeValideeEvent</span> event) {
+        rabbitTemplate.convertAndSend(
+            <span class="st">"exchange.commandes"</span>,
+            <span class="st">"commande.france.validee"</span>, <span class="cm">// routing key</span>
+            event
+        );
+    }
+}</pre>
+  </div>
+
+  <h3>Consommateur</h3>
+  <div class="code">
+    <pre><span class="an">@Component</span>
+<span class="kw">public class</span> <span class="cl">NotificationConsumer</span> {
+
+    <span class="an">@RabbitListener</span>(queues = <span class="st">"queue.commandes.validation"</span>)
+    <span class="kw">public void</span> traiterCommandeValidee(<span class="cl">CommandeValideeEvent</span> event) {
+        <span class="cm">// Traitement du message</span>
+        log.info(<span class="st">"Commande reçue : {}"</span>, event.getCommandeId());
+        notificationService.envoyerConfirmation(event);
+    }
+}</pre>
+  </div>
+
+  <h2>Fiabilité & gestion des erreurs</h2>
+  <ul>
+    <li><strong>Acknowledgement (ACK) :</strong> le consommateur confirme la réception du message. Sans ACK, RabbitMQ remet le message en queue.</li>
+    <li><strong>Dead Letter Queue (DLQ) :</strong> les messages qui échouent plusieurs fois sont renvoyés dans une queue dédiée pour analyse</li>
+    <li><strong>Message TTL :</strong> expiration des messages après un délai configurable</li>
+    <li><strong>Publisher Confirms :</strong> le producteur reçoit une confirmation que RabbitMQ a bien reçu le message</li>
+    <li><strong>Prefetch :</strong> limite le nombre de messages non-ACKed envoyés à un consommateur, pour éviter la surcharge</li>
+  </ul>
+
+  <div class="callout-orange">
+    <strong>Dead Letter Queue :</strong> toujours configurer une DLQ en production. Sans elle, un message qui échoue en boucle peut bloquer la queue entière ou être simplement perdu.
+  </div>
+
+  <h2>RabbitMQ vs Kafka</h2>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title" style="color:var(--orange);">RabbitMQ</div>
+      <p>Routage intelligent, queues traditionnelles, messages consommés et supprimés. Adapté aux <strong>workflows métier</strong>, tâches asynchrones, microservices.</p>
+    </div>
+    <div class="card">
+      <div class="card-title" style="color:var(--blue);">Kafka</div>
+      <p>Log distribué, rétention longue, replay des événements. Adapté au <strong>streaming</strong>, event sourcing, pipelines de données à très haut volume.</p>
+    </div>
+  </div>
+
+  <div class="callout">
+    <strong>En pratique :</strong> RabbitMQ est le choix naturel pour la communication inter-services dans une architecture microservices standard. Kafka s'impose quand on a besoin de rejouer des événements ou de traiter des millions de messages par seconde.
+  </div>
+
+  <h2>Dépendances Maven</h2>
+  <div class="code">
+    <pre><span class="cm">&lt;!-- Spring Boot Starter AMQP --&gt;</span>
+&lt;<span class="kw">dependency</span>&gt;
+    &lt;<span class="cl">groupId</span>&gt;org.springframework.boot&lt;/<span class="cl">groupId</span>&gt;
+    &lt;<span class="cl">artifactId</span>&gt;spring-boot-starter-amqp&lt;/<span class="cl">artifactId</span>&gt;
+&lt;/<span class="kw">dependency</span>&gt;</pre>
+  </div>
+
+  <h2>Outils complémentaires</h2>
+  <p>
+    <span class="tag-inline">Spring AMQP</span>
+    <span class="tag-inline">Spring Cloud Stream</span>
+    <span class="tag-inline">RabbitMQ Management UI</span>
+    <span class="tag-inline">Testcontainers (tests)</span>
+    <span class="tag-inline">Micrometer (monitoring)</span>
+  </p>
+
+</div>
+
+<footer>Thomas Quenault · quenaultthomas.dev</footer>
+</body>
+</html>

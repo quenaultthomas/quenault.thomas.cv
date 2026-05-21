@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Architecture Event-Driven – Thomas Quenault</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+  :root { --dark:#0d1b2a; --blue:#2d6be4; --blue-l:#deeafc; --blue-t:#1a4fae; --white:#ffffff; --muted:#7a96b5; --text:#1c2b3a; --sub:#4a5e72; --border:#dde6f0; --bg:#f4f7fb; }
+  body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text); line-height:1.7; }
+  .topbar { position:sticky; top:0; z-index:100; background:var(--dark); padding:12px 40px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid rgba(255,255,255,0.06); }
+  .topbar a { display:inline-flex; align-items:center; gap:8px; text-decoration:none; color:#7a96b5; font-size:13px; font-weight:500; }
+  .topbar a:hover { color:#fff; }
+  .topbar-title { font-size:13px; color:#3a5a75; }
+  .hero { background:var(--dark); padding:56px 40px; }
+  .hero-inner { max-width:800px; margin:0 auto; }
+  .hero-eyebrow { font-size:10px; font-weight:500; text-transform:uppercase; letter-spacing:3px; color:#5fa0e0; margin-bottom:16px; }
+  .hero-title { font-family:'DM Serif Display',serif; font-size:clamp(36px,5vw,52px); color:#fff; line-height:1.1; margin-bottom:16px; }
+  .hero-sub { font-size:16px; color:#7a96b5; line-height:1.6; max-width:560px; }
+  .hero-tags { display:flex; flex-wrap:wrap; gap:8px; margin-top:24px; }
+  .hero-tag { font-size:11px; font-weight:500; padding:4px 12px; border-radius:20px; background:rgba(45,107,228,0.2); color:#7eb4f7; border:1px solid rgba(45,107,228,0.3); }
+  .content { max-width:800px; margin:0 auto; padding:56px 40px; }
+  h2 { font-family:'DM Serif Display',serif; font-size:26px; color:var(--text); margin:48px 0 16px; padding-bottom:12px; border-bottom:2px solid var(--border); }
+  h3 { font-size:16px; font-weight:500; color:var(--text); margin:28px 0 10px; }
+  p { font-size:15px; color:var(--sub); margin-bottom:16px; line-height:1.75; }
+  ul { padding-left:20px; margin-bottom:16px; }
+  ul li { font-size:15px; color:var(--sub); margin-bottom:8px; }
+  ul li strong { color:var(--text); }
+  strong { color:var(--text); }
+  .callout { background:var(--blue-l); border-left:3px solid var(--blue); border-radius:0 8px 8px 0; padding:16px 20px; margin:24px 0; font-size:14px; color:var(--sub); }
+  .callout strong { color:var(--blue-t); }
+  .schema { background:var(--white); border:1px solid var(--border); border-radius:12px; padding:32px; margin:24px 0; }
+  .schema-title { font-size:11px; font-weight:500; text-transform:uppercase; letter-spacing:2px; color:var(--muted); margin-bottom:24px; text-align:center; }
+  .code { background:#111820; border-radius:10px; padding:20px 24px; margin:20px 0; overflow-x:auto; }
+  .code pre { font-family:'Fira Code',monospace; font-size:13px; line-height:1.7; color:#aec3d8; }
+  .code .kw { color:#7eb4f7; }
+  .code .cl { color:#4ade80; }
+  .code .an { color:#f9a8d4; }
+  .code .cm { color:#4a6a80; font-style:italic; }
+  .code .st { color:#fde68a; }
+  .grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:20px 0; }
+  .card { background:var(--white); border:1px solid var(--border); border-radius:10px; padding:20px; }
+  .card-title { font-size:11px; font-weight:500; text-transform:uppercase; letter-spacing:2px; color:var(--blue); margin-bottom:12px; }
+  .card p { font-size:13px; margin-bottom:0; }
+  .tag-inline { display:inline-block; font-size:11px; font-weight:500; padding:2px 9px; border-radius:20px; background:var(--blue-l); color:var(--blue-t); margin:2px; }
+  .see-also { display:inline-flex; align-items:center; gap:8px; text-decoration:none; color:var(--blue); font-size:14px; font-weight:500; margin-top:8px; }
+  .see-also:hover { color:var(--blue-t); }
+  footer { text-align:center; padding:32px; font-size:11px; color:var(--muted); border-top:1px solid var(--border); margin-top:40px; }
+  @media(max-width:640px) { .grid-2 { grid-template-columns:1fr; } .content,.hero { padding:40px 20px; } .topbar { padding:12px 20px; } }
+
+  /* EDA diagram */
+  .eda-flow { display:flex; flex-direction:column; gap:12px; align-items:center; }
+  .eda-row { display:flex; align-items:center; gap:12px; flex-wrap:wrap; justify-content:center; }
+  .eda-box { padding:10px 18px; border-radius:8px; font-size:12px; font-weight:500; text-align:center; }
+  .eda-producer { background:#eff6ff; color:#1e40af; border:1px solid #bfdbfe; }
+  .eda-broker { background:#0d1b2a; color:#7eb4f7; border:1px solid rgba(45,107,228,0.4); padding:10px 24px; }
+  .eda-consumer { background:#ecfdf5; color:#065f46; border:1px solid #a7f3d0; }
+  .eda-arrow { font-size:18px; color:var(--muted); }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="../index.html">
+    <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+    Retour au portfolio
+  </a>
+  <span class="topbar-title">Culture technique</span>
+</div>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-eyebrow">Architecture logicielle</div>
+    <h1 class="hero-title">Architecture<br>Event-Driven</h1>
+    <p class="hero-sub">Concevoir des systèmes découplés où les composants communiquent via des événements plutôt que des appels directs — pour plus de scalabilité, de résilience et de flexibilité.</p>
+    <div class="hero-tags">
+      <span class="hero-tag">Événements</span>
+      <span class="hero-tag">Découplage</span>
+      <span class="hero-tag">Asynchrone</span>
+      <span class="hero-tag">Microservices</span>
+      <span class="hero-tag">RabbitMQ</span>
+    </div>
+  </div>
+</div>
+
+<div class="content">
+
+  <h2>Le principe</h2>
+  <p>Dans une architecture event-driven (EDA), les composants du système ne s'appellent pas directement. À la place, ils <strong>publient des événements</strong> — des messages décrivant ce qui s'est passé — et d'autres composants s'y <strong>abonnent</strong> pour réagir.</p>
+  <p>C'est un modèle <strong>asynchrone et découplé</strong> : le producteur d'un événement ne sait pas qui le consomme, ni quand.</p>
+
+  <div class="schema">
+    <div class="schema-title">Flux Event-Driven</div>
+    <div class="eda-flow">
+      <div class="eda-row">
+        <div class="eda-box eda-producer">Service Commandes<br><span style="font-size:10px; color:#60a5fa;">Producteur</span></div>
+        <div class="eda-box eda-producer">Service Paiements<br><span style="font-size:10px; color:#60a5fa;">Producteur</span></div>
+      </div>
+      <div class="eda-arrow">↓ publient des événements ↓</div>
+      <div class="eda-box eda-broker">🔀 Message Broker<br><span style="font-size:10px; color:#93c5fd;">RabbitMQ · Kafka · ActiveMQ</span></div>
+      <div class="eda-arrow">↓ distribue aux abonnés ↓</div>
+      <div class="eda-row">
+        <div class="eda-box eda-consumer">Service Notifications<br><span style="font-size:10px; color:#34d399;">Consommateur</span></div>
+        <div class="eda-box eda-consumer">Service Stock<br><span style="font-size:10px; color:#34d399;">Consommateur</span></div>
+        <div class="eda-box eda-consumer">Service Audit<br><span style="font-size:10px; color:#34d399;">Consommateur</span></div>
+      </div>
+    </div>
+  </div>
+
+  <h2>Avantages</h2>
+  <ul>
+    <li><strong>Découplage :</strong> les services ne se connaissent pas directement — ajouter un consommateur ne modifie pas le producteur</li>
+    <li><strong>Scalabilité :</strong> les consommateurs peuvent être multipliés indépendamment pour absorber la charge</li>
+    <li><strong>Résilience :</strong> si un consommateur est indisponible, les messages s'accumulent dans la queue et sont traités à la reprise</li>
+    <li><strong>Traçabilité :</strong> les événements constituent un journal naturel des actions du système</li>
+  </ul>
+
+  <h2>Concepts clés</h2>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">Événement (Event)</div>
+      <p>Un fait passé et immuable : <em>"CommandeValidée"</em>, <em>"PaiementReçu"</em>, <em>"StockMisÀJour"</em>. Un événement décrit <strong>ce qui s'est passé</strong>, pas ce qui doit être fait.</p>
+    </div>
+    <div class="card">
+      <div class="card-title">Producteur (Producer)</div>
+      <p>Le service qui émet l'événement. Il publie dans le broker et <strong>n'attend pas de réponse</strong>. Son travail s'arrête là.</p>
+    </div>
+    <div class="card">
+      <div class="card-title">Broker (Message Broker)</div>
+      <p>L'intermédiaire qui reçoit, stocke et distribue les messages. Il garantit la livraison même si le consommateur est temporairement indisponible.</p>
+    </div>
+    <div class="card">
+      <div class="card-title">Consommateur (Consumer)</div>
+      <p>Le service qui s'abonne à un type d'événement et réagit. Plusieurs consommateurs peuvent traiter le même événement pour des besoins différents.</p>
+    </div>
+  </div>
+
+  <h2>Patterns courants</h2>
+
+  <h3>Publish / Subscribe</h3>
+  <p>Un message est <strong>diffusé à tous les abonnés</strong>. Chacun en reçoit une copie. Adapté pour les notifications, les mises à jour de cache, la synchronisation de données.</p>
+
+  <h3>Point-to-Point (Queue)</h3>
+  <p>Un message est consommé par <strong>un seul consommateur</strong> parmi plusieurs. Adapté pour la répartition de charge et les tâches de traitement.</p>
+
+  <h3>Event Sourcing</h3>
+  <p>L'état du système est reconstitué en rejouant l'historique des événements. Chaque changement est stocké comme un événement immuable — puissant mais complexe.</p>
+
+  <h3>CQRS</h3>
+  <p>Séparation des modèles de lecture (Query) et d'écriture (Command). Souvent couplé à l'Event-Driven pour synchroniser les deux modèles via des événements.</p>
+
+  <div class="callout">
+    <strong>EDA et microservices :</strong> l'architecture event-driven est particulièrement adaptée aux microservices. Elle évite le couplage fort des appels REST synchrones entre services, et améliore la résilience globale du système.
+  </div>
+
+  <h2>EDA vs REST synchrone</h2>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title" style="color:#9f1239;">REST synchrone</div>
+      <p>Service A appelle Service B et <strong>attend la réponse</strong>. Simple à comprendre, mais si B est lent ou indisponible, A est bloqué. Couplage fort.</p>
+    </div>
+    <div class="card">
+      <div class="card-title" style="color:#065f46;">Event-Driven asynchrone</div>
+      <p>Service A publie un événement et <strong>continue son traitement</strong>. B consomme quand il est prêt. Découplage total, meilleure résilience.</p>
+    </div>
+  </div>
+
+  <h2>Aller plus loin : RabbitMQ</h2>
+  <p>Pour le détail de l'implémentation avec RabbitMQ (exchanges, queues, bindings, Spring AMQP), voir la page dédiée.</p>
+  <a href="rabbitmq.html" class="see-also">
+    <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+    RabbitMQ – Mise en pratique avec Spring
+  </a>
+
+  <h2 style="margin-top:48px;">Brokers & outils</h2>
+  <p>
+    <span class="tag-inline">RabbitMQ</span>
+    <span class="tag-inline">Apache Kafka</span>
+    <span class="tag-inline">ActiveMQ</span>
+    <span class="tag-inline">Spring AMQP</span>
+    <span class="tag-inline">Spring Cloud Stream</span>
+    <span class="tag-inline">AWS SQS / SNS</span>
+  </p>
+
+</div>
+
+<footer>Thomas Quenault · quenaultthomas.dev</footer>
+</body>
+</html>
