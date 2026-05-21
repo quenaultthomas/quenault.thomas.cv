@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gitflow – Thomas Quenault</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+  :root { --dark:#0d1b2a; --blue:#2d6be4; --blue-l:#deeafc; --blue-t:#1a4fae; --white:#ffffff; --muted:#7a96b5; --text:#1c2b3a; --sub:#4a5e72; --border:#dde6f0; --bg:#f4f7fb; }
+  body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text); line-height:1.7; }
+  .topbar { position:sticky; top:0; z-index:100; background:var(--dark); padding:12px 40px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid rgba(255,255,255,0.06); }
+  .topbar a { display:inline-flex; align-items:center; gap:8px; text-decoration:none; color:#7a96b5; font-size:13px; font-weight:500; }
+  .topbar a:hover { color:#fff; }
+  .topbar-title { font-size:13px; color:#3a5a75; }
+  .hero { background:var(--dark); padding:56px 40px; }
+  .hero-inner { max-width:800px; margin:0 auto; }
+  .hero-eyebrow { font-size:10px; font-weight:500; text-transform:uppercase; letter-spacing:3px; color:#5fa0e0; margin-bottom:16px; }
+  .hero-title { font-family:'DM Serif Display',serif; font-size:clamp(36px,5vw,52px); color:#fff; line-height:1.1; margin-bottom:16px; }
+  .hero-sub { font-size:16px; color:#7a96b5; line-height:1.6; max-width:560px; }
+  .hero-tags { display:flex; flex-wrap:wrap; gap:8px; margin-top:24px; }
+  .hero-tag { font-size:11px; font-weight:500; padding:4px 12px; border-radius:20px; background:rgba(45,107,228,0.2); color:#7eb4f7; border:1px solid rgba(45,107,228,0.3); }
+  .content { max-width:800px; margin:0 auto; padding:56px 40px; }
+  h2 { font-family:'DM Serif Display',serif; font-size:26px; color:var(--text); margin:48px 0 16px; padding-bottom:12px; border-bottom:2px solid var(--border); }
+  h3 { font-size:16px; font-weight:500; color:var(--text); margin:28px 0 10px; }
+  p { font-size:15px; color:var(--sub); margin-bottom:16px; line-height:1.75; }
+  ul { padding-left:20px; margin-bottom:16px; }
+  ul li { font-size:15px; color:var(--sub); margin-bottom:8px; }
+  ul li strong { color:var(--text); }
+  strong { color:var(--text); }
+  .callout { background:var(--blue-l); border-left:3px solid var(--blue); border-radius:0 8px 8px 0; padding:16px 20px; margin:24px 0; font-size:14px; color:var(--sub); }
+  .callout strong { color:var(--blue-t); }
+  .schema { background:var(--white); border:1px solid var(--border); border-radius:12px; padding:28px; margin:24px 0; }
+  .schema-title { font-size:11px; font-weight:500; text-transform:uppercase; letter-spacing:2px; color:var(--muted); margin-bottom:20px; text-align:center; }
+  .code { background:#111820; border-radius:10px; padding:20px 24px; margin:20px 0; overflow-x:auto; }
+  .code pre { font-family:'Fira Code',monospace; font-size:13px; line-height:1.7; color:#aec3d8; }
+  .code .kw { color:#7eb4f7; }
+  .code .cm { color:#4a6a80; font-style:italic; }
+  .grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:20px 0; }
+  .card { background:var(--white); border:1px solid var(--border); border-radius:10px; padding:20px; }
+  .card-title { font-size:11px; font-weight:500; text-transform:uppercase; letter-spacing:2px; margin-bottom:12px; }
+  .card p { font-size:13px; margin-bottom:0; }
+  .tag-inline { display:inline-block; font-size:11px; font-weight:500; padding:2px 9px; border-radius:20px; background:var(--blue-l); color:var(--blue-t); margin:2px; }
+  footer { text-align:center; padding:32px; font-size:11px; color:var(--muted); border-top:1px solid var(--border); margin-top:40px; }
+  @media(max-width:640px) { .grid-2 { grid-template-columns:1fr; } .content,.hero { padding:40px 20px; } .topbar { padding:12px 20px; } }
+
+  /* Branch diagram */
+  .branch-diagram { display:flex; flex-direction:column; gap:16px; padding:8px 0; }
+  .branch-row { display:flex; align-items:center; gap:12px; }
+  .branch-name { font-size:11px; font-weight:500; padding:4px 12px; border-radius:20px; min-width:110px; text-align:center; }
+  .branch-line { flex:1; height:3px; border-radius:2px; position:relative; }
+  .branch-dot { width:10px; height:10px; border-radius:50%; border:2px solid white; position:absolute; top:-3.5px; }
+  .branch-label { font-size:11px; color:var(--muted); }
+  .b-main { background:#1e40af; color:white; }
+  .l-main { background:#1e40af; }
+  .b-develop { background:#065f46; color:white; }
+  .l-develop { background:#065f46; }
+  .b-feature { background:#7c3aed; color:white; }
+  .l-feature { background:#7c3aed; }
+  .b-release { background:#b45309; color:white; }
+  .l-release { background:#b45309; }
+  .b-hotfix { background:#9f1239; color:white; }
+  .l-hotfix { background:#9f1239; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="../index.html">
+    <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+    Retour au portfolio
+  </a>
+  <span class="topbar-title">Culture technique</span>
+</div>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-eyebrow">Gestion de version</div>
+    <h1 class="hero-title">Gitflow</h1>
+    <p class="hero-sub">Une stratégie de branches Git structurée pour organiser les développements, les releases et les correctifs en équipe, de manière prévisible et sécurisée.</p>
+    <div class="hero-tags">
+      <span class="hero-tag">Git</span><span class="hero-tag">CI/CD</span><span class="hero-tag">Workflow équipe</span><span class="hero-tag">Release management</span>
+    </div>
+  </div>
+</div>
+
+<div class="content">
+
+  <h2>Pourquoi Gitflow ?</h2>
+  <p>Dans une équipe, plusieurs développeurs travaillent en parallèle sur des fonctionnalités différentes tout en maintenant une version stable en production. Sans stratégie de branches, le chaos guette : conflits permanents, déploiements instables, hotfixes qui écrasent du travail en cours.</p>
+  <p>Gitflow, introduit par Vincent Driessen en 2010, propose un modèle clair et éprouvé pour structurer ce travail collaboratif.</p>
+
+  <h2>Les 5 types de branches</h2>
+
+  <div class="schema">
+    <div class="schema-title">Vue des branches Gitflow</div>
+    <div class="branch-diagram">
+      <div class="branch-row">
+        <span class="branch-name b-main">main</span>
+        <div class="branch-line l-main">
+          <div class="branch-dot" style="background:#1e40af; left:10px;"></div>
+          <div class="branch-dot" style="background:#1e40af; left:45%;"></div>
+          <div class="branch-dot" style="background:#1e40af; right:10px;"></div>
+        </div>
+        <span class="branch-label">Production stable · tags de release</span>
+      </div>
+      <div class="branch-row">
+        <span class="branch-name b-develop">develop</span>
+        <div class="branch-line l-develop" style="opacity:0.8;">
+          <div class="branch-dot" style="background:#065f46; left:10px;"></div>
+          <div class="branch-dot" style="background:#065f46; left:30%;"></div>
+          <div class="branch-dot" style="background:#065f46; left:60%;"></div>
+          <div class="branch-dot" style="background:#065f46; right:10px;"></div>
+        </div>
+        <span class="branch-label">Intégration continue des features</span>
+      </div>
+      <div class="branch-row">
+        <span class="branch-name b-feature">feature/*</span>
+        <div class="branch-line l-feature" style="opacity:0.6; margin-left:80px; margin-right:200px;">
+          <div class="branch-dot" style="background:#7c3aed; left:5px;"></div>
+          <div class="branch-dot" style="background:#7c3aed; right:5px;"></div>
+        </div>
+        <span class="branch-label">Nouvelle fonctionnalité</span>
+      </div>
+      <div class="branch-row">
+        <span class="branch-name b-release">release/*</span>
+        <div class="branch-line l-release" style="opacity:0.6; margin-left:160px; margin-right:80px;">
+          <div class="branch-dot" style="background:#b45309; left:5px;"></div>
+          <div class="branch-dot" style="background:#b45309; right:5px;"></div>
+        </div>
+        <span class="branch-label">Préparation d'une release</span>
+      </div>
+      <div class="branch-row">
+        <span class="branch-name b-hotfix">hotfix/*</span>
+        <div class="branch-line l-hotfix" style="opacity:0.6; margin-left:200px; margin-right:60px;">
+          <div class="branch-dot" style="background:#9f1239; left:5px;"></div>
+          <div class="branch-dot" style="background:#9f1239; right:5px;"></div>
+        </div>
+        <span class="branch-label">Correctif urgent en production</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title" style="color:#1e40af;">main</div>
+      <p>Branche de production. Contient uniquement le code <strong>stable et livré</strong>. Chaque commit correspond à une release taguée (<code>v1.0.0</code>).</p>
+    </div>
+    <div class="card">
+      <div class="card-title" style="color:#065f46;">develop</div>
+      <p>Branche d'intégration. Les features terminées sont mergées ici. C'est la branche de référence pour les développeurs.</p>
+    </div>
+    <div class="card">
+      <div class="card-title" style="color:#7c3aed;">feature/*</div>
+      <p>Branche créée depuis <code>develop</code> pour chaque nouvelle fonctionnalité. Nommée <code>feature/nom-de-la-feature</code>. Mergée dans <code>develop</code> à la fin.</p>
+    </div>
+    <div class="card">
+      <div class="card-title" style="color:#b45309;">release/*</div>
+      <p>Préparation d'une version. Créée depuis <code>develop</code>, permet les derniers ajustements (bump de version, corrections mineures) avant merge dans <code>main</code> et <code>develop</code>.</p>
+    </div>
+  </div>
+  <div class="card" style="border-color:#fecdd3; background:#fff1f2; margin-bottom:16px;">
+    <div class="card-title" style="color:#9f1239;">hotfix/*</div>
+    <p style="font-size:13px;">Correctif urgent en production. Créé directement depuis <code>main</code>, mergé dans <code>main</code> ET <code>develop</code> une fois terminé.</p>
+  </div>
+
+  <h2>Cycle de vie d'une feature</h2>
+  <div class="code">
+    <pre><span class="cm"># 1. Créer la branche feature depuis develop</span>
+<span class="kw">git checkout</span> develop
+<span class="kw">git checkout</span> -b feature/ma-feature
+
+<span class="cm"># 2. Développer, committer...</span>
+<span class="kw">git add</span> .
+<span class="kw">git commit</span> -m "feat: ajout de la fonctionnalité X"
+
+<span class="cm"># 3. Merger dans develop (via Pull Request / Merge Request)</span>
+<span class="kw">git checkout</span> develop
+<span class="kw">git merge</span> --no-ff feature/ma-feature
+<span class="kw">git branch</span> -d feature/ma-feature</pre>
+  </div>
+
+  <h2>Gitflow vs Trunk-Based Development</h2>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title" style="color:var(--blue);">Gitflow</div>
+      <p>Adapté aux équipes avec des <strong>cycles de release planifiés</strong>, plusieurs versions en parallèle, ou des processus de validation stricts (ex: secteur bancaire, public).</p>
+    </div>
+    <div class="card">
+      <div class="card-title" style="color:var(--blue);">Trunk-Based</div>
+      <p>Tout le monde commit sur <code>main</code>, releases fréquentes, feature flags. Adapté aux équipes matures avec une CI/CD très robuste (ex: startups, SaaS).</p>
+    </div>
+  </div>
+
+  <div class="callout">
+    <strong>En pratique :</strong> Gitflow est le standard dans les contextes bancaires et secteur public où les releases sont planifiées et validées avant déploiement. Il offre une traçabilité claire et un historique propre.
+  </div>
+
+  <h2>Outils</h2>
+  <p>
+    <span class="tag-inline">Git</span>
+    <span class="tag-inline">GitLab</span>
+    <span class="tag-inline">GitHub</span>
+    <span class="tag-inline">git-flow (CLI)</span>
+    <span class="tag-inline">SourceTree</span>
+    <span class="tag-inline">IntelliJ IDEA</span>
+  </p>
+
+</div>
+
+<footer>Thomas Quenault · quenaultthomas.dev</footer>
+</body>
+</html>

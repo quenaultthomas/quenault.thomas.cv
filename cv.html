@@ -172,10 +172,20 @@
     <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
     Retour au portfolio
   </a>
-  <button onclick="window.print()" style="display:inline-flex; align-items:center; gap:8px; background:rgba(45,107,228,0.2); border:1px solid rgba(45,107,228,0.4); color:#7eb4f7; font-family:'DM Sans',sans-serif; font-size:13px; font-weight:500; padding:7px 16px; border-radius:7px; cursor:pointer; transition:all .2s;" onmouseover="this.style.background='rgba(45,107,228,0.35)'; this.style.color='#ffffff'" onmouseout="this.style.background='rgba(45,107,228,0.2)'; this.style.color='#7eb4f7'">
+  <button onclick="handlePrint()" style="display:inline-flex; align-items:center; gap:8px; background:rgba(45,107,228,0.2); border:1px solid rgba(45,107,228,0.4); color:#7eb4f7; font-family:'DM Sans',sans-serif; font-size:13px; font-weight:500; padding:7px 16px; border-radius:7px; cursor:pointer; transition:all .2s;" onmouseover="this.style.background='rgba(45,107,228,0.35)'; this.style.color='#ffffff'" onmouseout="this.style.background='rgba(45,107,228,0.2)'; this.style.color='#7eb4f7'">
     <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
     Imprimer / PDF
   </button>
+<script>
+function handlePrint() {
+  var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  if (isMobile) {
+    alert("Sur mobile :\n\n• Chrome : menu ⋮ → Partager → Imprimer\n• Safari : icône partage → Imprimer");
+  } else {
+    window.print();
+  }
+}
+</script>
 </div>
 <div class="print-spacer" style="height:44px;"></div>
 <div class="page">
@@ -254,7 +264,7 @@
     <div class="exp-item current">
       <div class="exp-role">Ingénieur études & développement Back-End</div>
       <div class="exp-company">Catamania – mission Ministère des Affaires étrangères</div>
-      <div class="exp-period">Avr. 2025 – Présent</div>
+      <div class="exp-period">Avr. 2026 – Présent</div>
       <div class="project-box">
         <div class="project-name">Projet RECE – Référentiel Électronique d'État Civil</div>
         <div class="project-sub">Développement back-end d'une application de gestion numérique des actes d'état civil pour le Ministère de l'Europe et des Affaires étrangères. L'application vise à centraliser et sécuriser les données d'état civil des ressortissants français à l'étranger, en assurant leur intégrité et leur traçabilité.</div>
@@ -270,7 +280,7 @@
     <div class="exp-item">
       <div class="exp-role">Ingénieur études & développement Back-End</div>
       <div class="exp-company">Catamania – mission SIGMA Informatique</div>
-      <div class="exp-period">Janv. 2025 – Avr. 2025</div>
+      <div class="exp-period">Janv. 2025 – Avr. 2026</div>
       <div class="project-box">
         <div class="project-name">Projet CSRD – Double matérialité</div>
         <div class="project-sub">Développement back-end d'une application permettant d'établir la double matérialité d'une entreprise afin de prioriser le contenu du formulaire CSRD (Corporate Sustainability Reporting Directive).</div>

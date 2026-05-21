@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spring Boot – Thomas Quenault</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+  :root { --dark:#0d1b2a; --blue:#2d6be4; --blue-l:#deeafc; --blue-t:#1a4fae; --white:#ffffff; --muted:#7a96b5; --text:#1c2b3a; --sub:#4a5e72; --border:#dde6f0; --bg:#f4f7fb; }
+  body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text); line-height:1.7; }
+  .topbar { position:sticky; top:0; z-index:100; background:var(--dark); padding:12px 40px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid rgba(255,255,255,0.06); }
+  .topbar a { display:inline-flex; align-items:center; gap:8px; text-decoration:none; color:#7a96b5; font-size:13px; font-weight:500; }
+  .topbar a:hover { color:#fff; }
+  .topbar-title { font-size:13px; color:#3a5a75; }
+  .hero { background:var(--dark); padding:56px 40px; }
+  .hero-inner { max-width:800px; margin:0 auto; }
+  .hero-eyebrow { font-size:10px; font-weight:500; text-transform:uppercase; letter-spacing:3px; color:#5fa0e0; margin-bottom:16px; }
+  .hero-title { font-family:'DM Serif Display',serif; font-size:clamp(36px,5vw,52px); color:#fff; line-height:1.1; margin-bottom:16px; }
+  .hero-sub { font-size:16px; color:#7a96b5; line-height:1.6; max-width:560px; }
+  .hero-tags { display:flex; flex-wrap:wrap; gap:8px; margin-top:24px; }
+  .hero-tag { font-size:11px; font-weight:500; padding:4px 12px; border-radius:20px; background:rgba(45,107,228,0.2); color:#7eb4f7; border:1px solid rgba(45,107,228,0.3); }
+  .content { max-width:800px; margin:0 auto; padding:56px 40px; }
+  h2 { font-family:'DM Serif Display',serif; font-size:26px; color:var(--text); margin:48px 0 16px; padding-bottom:12px; border-bottom:2px solid var(--border); }
+  h3 { font-size:16px; font-weight:500; color:var(--text); margin:28px 0 10px; }
+  p { font-size:15px; color:var(--sub); margin-bottom:16px; line-height:1.75; }
+  ul { padding-left:20px; margin-bottom:16px; }
+  ul li { font-size:15px; color:var(--sub); margin-bottom:8px; }
+  ul li strong { color:var(--text); }
+  strong { color:var(--text); }
+  .callout { background:var(--blue-l); border-left:3px solid var(--blue); border-radius:0 8px 8px 0; padding:16px 20px; margin:24px 0; font-size:14px; color:var(--sub); }
+  .callout strong { color:var(--blue-t); }
+  .code { background:#111820; border-radius:10px; padding:20px 24px; margin:20px 0; overflow-x:auto; }
+  .code pre { font-family:'Fira Code',monospace; font-size:13px; line-height:1.7; color:#aec3d8; }
+  .code .kw { color:#7eb4f7; }
+  .code .cl { color:#4ade80; }
+  .code .an { color:#f9a8d4; }
+  .code .cm { color:#4a6a80; font-style:italic; }
+  .code .st { color:#fde68a; }
+  .grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:20px 0; }
+  .grid-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; margin:20px 0; }
+  .card { background:var(--white); border:1px solid var(--border); border-radius:10px; padding:20px; }
+  .card-title { font-size:11px; font-weight:500; text-transform:uppercase; letter-spacing:2px; color:var(--blue); margin-bottom:12px; }
+  .card p { font-size:13px; margin-bottom:0; }
+  .tag-inline { display:inline-block; font-size:11px; font-weight:500; padding:2px 9px; border-radius:20px; background:var(--blue-l); color:var(--blue-t); margin:2px; }
+  footer { text-align:center; padding:32px; font-size:11px; color:var(--muted); border-top:1px solid var(--border); margin-top:40px; }
+  @media(max-width:640px) { .grid-2,.grid-3 { grid-template-columns:1fr; } .content,.hero { padding:40px 20px; } .topbar { padding:12px 20px; } }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="../index.html">
+    <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+    Retour au portfolio
+  </a>
+  <span class="topbar-title">Culture technique</span>
+</div>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-eyebrow">Framework Java</div>
+    <h1 class="hero-title">Spring Boot</h1>
+    <p class="hero-sub">Le framework Java incontournable pour créer des applications prêtes pour la production en quelques minutes, grâce à l'auto-configuration et l'injection de dépendances.</p>
+    <div class="hero-tags">
+      <span class="hero-tag">Java</span><span class="hero-tag">IoC</span><span class="hero-tag">Auto-configuration</span><span class="hero-tag">REST</span><span class="hero-tag">Microservices</span>
+    </div>
+  </div>
+</div>
+
+<div class="content">
+
+  <h2>Spring vs Spring Boot</h2>
+  <p><strong>Spring Framework</strong> est un framework Java très complet mais verbose : il fallait configurer manuellement chaque bean, chaque datasource, chaque servlet. Spring Boot a révolutionné ça en 2014.</p>
+  <p><strong>Spring Boot</strong> apporte :</p>
+  <ul>
+    <li><strong>Auto-configuration :</strong> détecte les dépendances présentes et configure automatiquement les beans nécessaires</li>
+    <li><strong>Starters :</strong> dépendances groupées et compatibles (ex: <code>spring-boot-starter-web</code>)</li>
+    <li><strong>Serveur embarqué :</strong> Tomcat/Jetty inclus, pas besoin de déployer un WAR</li>
+    <li><strong>Actuator :</strong> endpoints de monitoring et de santé prêts à l'emploi</li>
+  </ul>
+
+  <div class="callout">
+    <strong>Convention over configuration :</strong> Spring Boot choisit des valeurs par défaut sensées. On ne configure que ce qui s'écarte de la convention.
+  </div>
+
+  <h2>L'injection de dépendances (IoC)</h2>
+  <p>Le principe fondamental de Spring : c'est le <strong>conteneur IoC</strong> (Inversion of Control) qui crée et injecte les dépendances, pas le développeur. On déclare ce dont on a besoin, Spring le fournit.</p>
+
+  <div class="code">
+    <pre><span class="an">@Service</span>
+<span class="kw">public class</span> <span class="cl">CommandeService</span> {
+
+    <span class="kw">private final</span> <span class="cl">CommandeRepository</span> repository;
+    <span class="kw">private final</span> <span class="cl">NotificationService</span> notificationService;
+
+    <span class="cm">// Injection par constructeur – recommandée</span>
+    <span class="kw">public</span> <span class="cl">CommandeService</span>(<span class="cl">CommandeRepository</span> repository,
+                           <span class="cl">NotificationService</span> notificationService) {
+        <span class="kw">this</span>.repository = repository;
+        <span class="kw">this</span>.notificationService = notificationService;
+    }
+}</pre>
+  </div>
+
+  <h2>Les annotations essentielles</h2>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">Stéréotypes</div>
+      <p><span class="tag-inline">@Component</span> Bean générique<br>
+      <span class="tag-inline">@Service</span> Couche service<br>
+      <span class="tag-inline">@Repository</span> Couche persistance<br>
+      <span class="tag-inline">@Controller</span> Couche web<br>
+      <span class="tag-inline">@RestController</span> API REST</p>
+    </div>
+    <div class="card">
+      <div class="card-title">Configuration</div>
+      <p><span class="tag-inline">@Configuration</span> Classe de config<br>
+      <span class="tag-inline">@Bean</span> Déclaration de bean<br>
+      <span class="tag-inline">@Value</span> Injection de propriété<br>
+      <span class="tag-inline">@ConfigurationProperties</span> Config typée<br>
+      <span class="tag-inline">@Profile</span> Config par environnement</p>
+    </div>
+    <div class="card">
+      <div class="card-title">Web & REST</div>
+      <p><span class="tag-inline">@RequestMapping</span><br>
+      <span class="tag-inline">@GetMapping</span> / <span class="tag-inline">@PostMapping</span><br>
+      <span class="tag-inline">@PathVariable</span><br>
+      <span class="tag-inline">@RequestBody</span> / <span class="tag-inline">@ResponseBody</span><br>
+      <span class="tag-inline">@ExceptionHandler</span></p>
+    </div>
+    <div class="card">
+      <div class="card-title">Transactionnel & Data</div>
+      <p><span class="tag-inline">@Transactional</span> Gestion des transactions<br>
+      <span class="tag-inline">@Entity</span> Entité JPA<br>
+      <span class="tag-inline">@Repository</span> Spring Data<br>
+      <span class="tag-inline">@Query</span> Requête JPQL/SQL<br>
+      <span class="tag-inline">@Scheduled</span> Tâches planifiées</p>
+    </div>
+  </div>
+
+  <h2>Créer un endpoint REST</h2>
+  <div class="code">
+    <pre><span class="an">@RestController</span>
+<span class="an">@RequestMapping</span>(<span class="st">"/api/commandes"</span>)
+<span class="kw">public class</span> <span class="cl">CommandeController</span> {
+
+    <span class="kw">private final</span> <span class="cl">CommandeService</span> service;
+
+    <span class="kw">public</span> <span class="cl">CommandeController</span>(<span class="cl">CommandeService</span> service) {
+        <span class="kw">this</span>.service = service;
+    }
+
+    <span class="an">@GetMapping</span>(<span class="st">"/{id}"</span>)
+    <span class="kw">public</span> <span class="cl">ResponseEntity</span>&lt;<span class="cl">CommandeDTO</span>&gt; getById(<span class="an">@PathVariable</span> <span class="cl">Long</span> id) {
+        <span class="kw">return</span> service.findById(id)
+            .map(<span class="cl">ResponseEntity</span>::ok)
+            .orElse(<span class="cl">ResponseEntity</span>.notFound().build());
+    }
+
+    <span class="an">@PostMapping</span>
+    <span class="an">@ResponseStatus</span>(<span class="cl">HttpStatus</span>.CREATED)
+    <span class="kw">public</span> <span class="cl">CommandeDTO</span> create(<span class="an">@RequestBody</span> <span class="cl">CreateCommandeRequest</span> request) {
+        <span class="kw">return</span> service.create(request);
+    }
+}</pre>
+  </div>
+
+  <h2>Spring Boot 3 – Les nouveautés</h2>
+  <div class="grid-3">
+    <div class="card">
+      <div class="card-title">Java 17+</div>
+      <p>Spring Boot 3 requiert Java 17 minimum. Profite des records, sealed classes, pattern matching.</p>
+    </div>
+    <div class="card">
+      <div class="card-title">GraalVM Native</div>
+      <p>Compilation en image native pour un démarrage en millisecondes et une empreinte mémoire réduite.</p>
+    </div>
+    <div class="card">
+      <div class="card-title">Jakarta EE 10</div>
+      <p>Migration de <code>javax.*</code> vers <code>jakarta.*</code>. Observabilité améliorée avec Micrometer.</p>
+    </div>
+  </div>
+
+  <h2>Starters courants</h2>
+  <p>
+    <span class="tag-inline">spring-boot-starter-web</span>
+    <span class="tag-inline">spring-boot-starter-data-jpa</span>
+    <span class="tag-inline">spring-boot-starter-security</span>
+    <span class="tag-inline">spring-boot-starter-test</span>
+    <span class="tag-inline">spring-boot-starter-actuator</span>
+    <span class="tag-inline">spring-boot-starter-amqp</span>
+    <span class="tag-inline">spring-boot-starter-batch</span>
+    <span class="tag-inline">spring-boot-starter-validation</span>
+  </p>
+
+</div>
+
+<footer>Thomas Quenault · quenaultthomas.dev</footer>
+</body>
+</html>

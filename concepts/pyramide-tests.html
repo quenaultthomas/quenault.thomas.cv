@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pyramide de tests – Thomas Quenault</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+  :root { --dark:#0d1b2a; --blue:#2d6be4; --blue-l:#deeafc; --blue-t:#1a4fae; --white:#ffffff; --muted:#7a96b5; --text:#1c2b3a; --sub:#4a5e72; --border:#dde6f0; --bg:#f4f7fb; }
+  body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text); line-height:1.7; }
+  .topbar { position:sticky; top:0; z-index:100; background:var(--dark); padding:12px 40px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid rgba(255,255,255,0.06); }
+  .topbar a { display:inline-flex; align-items:center; gap:8px; text-decoration:none; color:#7a96b5; font-size:13px; font-weight:500; }
+  .topbar a:hover { color:#fff; }
+  .topbar-title { font-size:13px; color:#3a5a75; }
+  .hero { background:var(--dark); padding:56px 40px; }
+  .hero-inner { max-width:800px; margin:0 auto; }
+  .hero-eyebrow { font-size:10px; font-weight:500; text-transform:uppercase; letter-spacing:3px; color:#5fa0e0; margin-bottom:16px; }
+  .hero-title { font-family:'DM Serif Display',serif; font-size:clamp(36px,5vw,52px); color:#fff; line-height:1.1; margin-bottom:16px; }
+  .hero-sub { font-size:16px; color:#7a96b5; line-height:1.6; max-width:560px; }
+  .hero-tags { display:flex; flex-wrap:wrap; gap:8px; margin-top:24px; }
+  .hero-tag { font-size:11px; font-weight:500; padding:4px 12px; border-radius:20px; background:rgba(45,107,228,0.2); color:#7eb4f7; border:1px solid rgba(45,107,228,0.3); }
+  .content { max-width:800px; margin:0 auto; padding:56px 40px; }
+  h2 { font-family:'DM Serif Display',serif; font-size:26px; color:var(--text); margin:48px 0 16px; padding-bottom:12px; border-bottom:2px solid var(--border); }
+  h3 { font-size:16px; font-weight:500; color:var(--text); margin:28px 0 10px; }
+  p { font-size:15px; color:var(--sub); margin-bottom:16px; line-height:1.75; }
+  ul { padding-left:20px; margin-bottom:16px; }
+  ul li { font-size:15px; color:var(--sub); margin-bottom:8px; }
+  ul li strong { color:var(--text); }
+  strong { color:var(--text); }
+  .callout { background:var(--blue-l); border-left:3px solid var(--blue); border-radius:0 8px 8px 0; padding:16px 20px; margin:24px 0; font-size:14px; color:var(--sub); }
+  .callout strong { color:var(--blue-t); }
+  .schema { background:var(--white); border:1px solid var(--border); border-radius:12px; padding:32px; margin:24px 0; text-align:center; }
+  .schema-title { font-size:11px; font-weight:500; text-transform:uppercase; letter-spacing:2px; color:var(--muted); margin-bottom:24px; }
+  .code { background:#111820; border-radius:10px; padding:20px 24px; margin:20px 0; overflow-x:auto; }
+  .code pre { font-family:'Fira Code',monospace; font-size:13px; line-height:1.7; color:#aec3d8; }
+  .code .kw { color:#7eb4f7; }
+  .code .cl { color:#4ade80; }
+  .code .an { color:#f9a8d4; }
+  .code .cm { color:#4a6a80; font-style:italic; }
+  .grid-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; margin:20px 0; }
+  .card { background:var(--white); border:1px solid var(--border); border-radius:10px; padding:20px; }
+  .card-title { font-size:11px; font-weight:500; text-transform:uppercase; letter-spacing:2px; margin-bottom:8px; }
+  .card p { font-size:13px; margin-bottom:6px; }
+  .tag-inline { display:inline-block; font-size:11px; font-weight:500; padding:2px 9px; border-radius:20px; background:var(--blue-l); color:var(--blue-t); margin:2px; }
+  footer { text-align:center; padding:32px; font-size:11px; color:var(--muted); border-top:1px solid var(--border); margin-top:40px; }
+  @media(max-width:640px) { .grid-3 { grid-template-columns:1fr; } .content,.hero { padding:40px 20px; } .topbar { padding:12px 20px; } }
+
+  /* Pyramid */
+  .pyramid { display:flex; flex-direction:column; align-items:center; gap:4px; padding:16px 0; }
+  .pyramid-layer { display:flex; align-items:center; justify-content:center; border-radius:6px; font-size:13px; font-weight:500; color:white; transition:transform .2s; cursor:default; }
+  .pyramid-layer:hover { transform:scaleX(1.02); }
+  .p-e2e { width:160px; height:52px; background:#9f1239; }
+  .p-int { width:280px; height:52px; background:#b45309; }
+  .p-unit { width:400px; height:56px; background:#065f46; font-size:14px; }
+  .pyramid-label { font-size:10px; color:var(--muted); margin-top:4px; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="../index.html">
+    <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+    Retour au portfolio
+  </a>
+  <span class="topbar-title">Culture technique</span>
+</div>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-eyebrow">Qualité logicielle</div>
+    <h1 class="hero-title">Pyramide de tests</h1>
+    <p class="hero-sub">Un modèle pour équilibrer sa stratégie de tests : beaucoup de tests unitaires rapides, moins de tests d'intégration, et peu de tests end-to-end coûteux.</p>
+    <div class="hero-tags">
+      <span class="hero-tag">Tests unitaires</span><span class="hero-tag">Tests d'intégration</span><span class="hero-tag">E2E</span><span class="hero-tag">TDD</span><span class="hero-tag">Qualité</span>
+    </div>
+  </div>
+</div>
+
+<div class="content">
+
+  <h2>Le modèle</h2>
+  <p>La pyramide de tests, popularisée par Mike Cohn, décrit comment répartir ses efforts de test pour obtenir un feedback rapide, une bonne couverture et une suite de tests maintenable.</p>
+
+  <div class="schema">
+    <div class="schema-title">La pyramide de tests</div>
+    <div class="pyramid">
+      <div class="pyramid-layer p-e2e">E2E</div>
+      <div class="pyramid-label">Lents · Coûteux · Peu nombreux</div>
+      <div style="height:8px;"></div>
+      <div class="pyramid-layer p-int">Intégration</div>
+      <div class="pyramid-label">Moyens · Coût moyen</div>
+      <div style="height:8px;"></div>
+      <div class="pyramid-layer p-unit">Tests Unitaires</div>
+      <div class="pyramid-label">Rapides · Peu coûteux · Très nombreux</div>
+    </div>
+  </div>
+
+  <div class="callout">
+    <strong>Règle générale :</strong> ~70% de tests unitaires · ~20% de tests d'intégration · ~10% de tests E2E. Plus on monte dans la pyramide, plus les tests sont lents, fragiles et coûteux à maintenir.
+  </div>
+
+  <h2>Les 3 niveaux</h2>
+
+  <h3>🟢 Tests unitaires – La base</h3>
+  <p>Testent une <strong>unité isolée</strong> (classe, méthode) sans dépendance externe. Les collaborateurs sont remplacés par des <em>mocks</em>. Ils sont rapides (millisecondes), stables et faciles à écrire.</p>
+
+  <div class="code">
+    <pre><span class="an">@ExtendWith</span>(MockitoExtension.<span class="kw">class</span>)
+<span class="kw">class</span> <span class="cl">CommandeServiceTest</span> {
+
+    <span class="an">@Mock</span> <span class="cl">CommandeRepository</span> repository;
+    <span class="an">@InjectMocks</span> <span class="cl">CommandeService</span> service;
+
+    <span class="an">@Test</span>
+    <span class="kw">void</span> devraitCalculerLeTotalCorrectement() {
+        <span class="cm">// Given</span>
+        <span class="kw">var</span> commande = <span class="kw">new</span> <span class="cl">Commande</span>(<span class="cl">List</span>.of(
+            <span class="kw">new</span> <span class="cl">Ligne</span>(produitA, 2),
+            <span class="kw">new</span> <span class="cl">Ligne</span>(produitB, 1)
+        ));
+
+        <span class="cm">// When</span>
+        <span class="kw">var</span> total = service.calculerTotal(commande);
+
+        <span class="cm">// Then</span>
+        assertThat(total).isEqualTo(<span class="cl">Montant</span>.de(<span class="kw">150</span>));
+    }
+}</pre>
+  </div>
+
+  <h3>🟡 Tests d'intégration – Le milieu</h3>
+  <p>Testent l'interaction entre plusieurs composants : le service avec la base de données, le controller avec le service, etc. Nécessitent souvent un contexte Spring ou une base embarquée.</p>
+
+  <div class="code">
+    <pre><span class="an">@SpringBootTest</span>
+<span class="an">@AutoConfigureMockMvc</span>
+<span class="kw">class</span> <span class="cl">CommandeControllerIT</span> {
+
+    <span class="an">@Autowired</span> <span class="cl">MockMvc</span> mockMvc;
+
+    <span class="an">@Test</span>
+    <span class="kw">void</span> devraitRetournerLaCommandeParId() <span class="kw">throws</span> Exception {
+        mockMvc.perform(get(<span class="st">"/commandes/1"</span>))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath(<span class="st">"$.id"</span>).value(<span class="kw">1</span>));
+    }
+}</pre>
+  </div>
+
+  <h3>🔴 Tests End-to-End – Le sommet</h3>
+  <p>Testent l'application de bout en bout, du navigateur à la base de données, comme le ferait un utilisateur réel. Lents, fragiles, mais indispensables pour valider les parcours critiques.</p>
+  <p>Outils courants : <span class="tag-inline">Cypress</span> <span class="tag-inline">Playwright</span> <span class="tag-inline">Selenium</span> <span class="tag-inline">Cucumber</span></p>
+
+  <h2>Frameworks Java</h2>
+  <div class="grid-3">
+    <div class="card">
+      <div class="card-title" style="color:#065f46;">Tests unitaires</div>
+      <p><span class="tag-inline">JUnit 5</span> <span class="tag-inline">Mockito</span> <span class="tag-inline">AssertJ</span> <span class="tag-inline">Spock</span></p>
+    </div>
+    <div class="card">
+      <div class="card-title" style="color:#b45309;">Intégration</div>
+      <p><span class="tag-inline">Spring Boot Test</span> <span class="tag-inline">MockMvc</span> <span class="tag-inline">Testcontainers</span> <span class="tag-inline">MockServer</span></p>
+    </div>
+    <div class="card">
+      <div class="card-title" style="color:#9f1239;">E2E</div>
+      <p><span class="tag-inline">Cypress</span> <span class="tag-inline">Playwright</span> <span class="tag-inline">Cucumber</span> <span class="tag-inline">RestAssured</span></p>
+    </div>
+  </div>
+
+  <h2>Antipatterns à éviter</h2>
+  <ul>
+    <li><strong>Le cône de glace :</strong> pyramide inversée avec trop de tests E2E et peu de tests unitaires → suite lente et fragile</li>
+    <li><strong>Les tests qui ne testent rien :</strong> coverage élevé mais assertions trop faibles</li>
+    <li><strong>Les tests couplés à l'implémentation :</strong> tester le <em>comment</em> plutôt que le <em>quoi</em></li>
+    <li><strong>Mocker le domaine :</strong> les tests unitaires du domaine ne devraient pas nécessiter de mocks</li>
+  </ul>
+
+  <div class="callout">
+    <strong>TDD (Test-Driven Development) :</strong> écrire le test avant le code. Red → Green → Refactor. Permet de concevoir une API claire et un code naturellement testable.
+  </div>
+
+</div>
+
+<footer>Thomas Quenault · quenaultthomas.dev</footer>
+</body>
+</html>

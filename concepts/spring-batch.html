@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spring Batch – Thomas Quenault</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+  :root { --dark:#0d1b2a; --blue:#2d6be4; --blue-l:#deeafc; --blue-t:#1a4fae; --white:#ffffff; --muted:#7a96b5; --text:#1c2b3a; --sub:#4a5e72; --border:#dde6f0; --bg:#f4f7fb; }
+  body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text); line-height:1.7; }
+  .topbar { position:sticky; top:0; z-index:100; background:var(--dark); padding:12px 40px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid rgba(255,255,255,0.06); }
+  .topbar a { display:inline-flex; align-items:center; gap:8px; text-decoration:none; color:#7a96b5; font-size:13px; font-weight:500; }
+  .topbar a:hover { color:#fff; }
+  .topbar-title { font-size:13px; color:#3a5a75; }
+  .hero { background:var(--dark); padding:56px 40px; }
+  .hero-inner { max-width:800px; margin:0 auto; }
+  .hero-eyebrow { font-size:10px; font-weight:500; text-transform:uppercase; letter-spacing:3px; color:#5fa0e0; margin-bottom:16px; }
+  .hero-title { font-family:'DM Serif Display',serif; font-size:clamp(36px,5vw,52px); color:#fff; line-height:1.1; margin-bottom:16px; }
+  .hero-sub { font-size:16px; color:#7a96b5; line-height:1.6; max-width:560px; }
+  .hero-tags { display:flex; flex-wrap:wrap; gap:8px; margin-top:24px; }
+  .hero-tag { font-size:11px; font-weight:500; padding:4px 12px; border-radius:20px; background:rgba(45,107,228,0.2); color:#7eb4f7; border:1px solid rgba(45,107,228,0.3); }
+  .content { max-width:800px; margin:0 auto; padding:56px 40px; }
+  h2 { font-family:'DM Serif Display',serif; font-size:26px; color:var(--text); margin:48px 0 16px; padding-bottom:12px; border-bottom:2px solid var(--border); }
+  h3 { font-size:16px; font-weight:500; color:var(--text); margin:28px 0 10px; }
+  p { font-size:15px; color:var(--sub); margin-bottom:16px; line-height:1.75; }
+  ul { padding-left:20px; margin-bottom:16px; }
+  ul li { font-size:15px; color:var(--sub); margin-bottom:8px; }
+  ul li strong { color:var(--text); }
+  strong { color:var(--text); }
+  .callout { background:var(--blue-l); border-left:3px solid var(--blue); border-radius:0 8px 8px 0; padding:16px 20px; margin:24px 0; font-size:14px; color:var(--sub); }
+  .callout strong { color:var(--blue-t); }
+  .schema { background:var(--white); border:1px solid var(--border); border-radius:12px; padding:32px; margin:24px 0; }
+  .schema-title { font-size:11px; font-weight:500; text-transform:uppercase; letter-spacing:2px; color:var(--muted); margin-bottom:24px; text-align:center; }
+  .code { background:#111820; border-radius:10px; padding:20px 24px; margin:20px 0; overflow-x:auto; }
+  .code pre { font-family:'Fira Code',monospace; font-size:13px; line-height:1.7; color:#aec3d8; }
+  .code .kw { color:#7eb4f7; }
+  .code .cl { color:#4ade80; }
+  .code .an { color:#f9a8d4; }
+  .code .cm { color:#4a6a80; font-style:italic; }
+  .code .st { color:#fde68a; }
+  .grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:20px 0; }
+  .card { background:var(--white); border:1px solid var(--border); border-radius:10px; padding:20px; }
+  .card-title { font-size:11px; font-weight:500; text-transform:uppercase; letter-spacing:2px; color:var(--blue); margin-bottom:12px; }
+  .card p { font-size:13px; margin-bottom:0; }
+  .tag-inline { display:inline-block; font-size:11px; font-weight:500; padding:2px 9px; border-radius:20px; background:var(--blue-l); color:var(--blue-t); margin:2px; }
+  footer { text-align:center; padding:32px; font-size:11px; color:var(--muted); border-top:1px solid var(--border); margin-top:40px; }
+  @media(max-width:640px) { .grid-2 { grid-template-columns:1fr; } .content,.hero { padding:40px 20px; } .topbar { padding:12px 20px; } }
+
+  .flow { display:flex; align-items:center; gap:8px; flex-wrap:wrap; justify-content:center; padding:16px 0; }
+  .flow-box { padding:12px 20px; border-radius:8px; font-size:13px; font-weight:500; text-align:center; min-width:100px; }
+  .flow-arrow { font-size:20px; color:var(--muted); }
+  .fb-reader { background:#eff6ff; color:#1e40af; border:1px solid #bfdbfe; }
+  .fb-processor { background:#ecfdf5; color:#065f46; border:1px solid #a7f3d0; }
+  .fb-writer { background:#fef9ec; color:#92400e; border:1px solid #fde68a; }
+  .fb-job { background:#0d1b2a; color:white; border:none; }
+  .fb-step { background:#1e3a5f; color:#7eb4f7; border:1px solid rgba(45,107,228,0.3); }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="../index.html">
+    <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+    Retour au portfolio
+  </a>
+  <span class="topbar-title">Culture technique</span>
+</div>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-eyebrow">Framework Java · Spring</div>
+    <h1 class="hero-title">Spring Batch</h1>
+    <p class="hero-sub">Framework de traitement de données par lots (batch processing) : lire des millions d'enregistrements, les transformer et les écrire de manière robuste, relançable et tracée.</p>
+    <div class="hero-tags">
+      <span class="hero-tag">Java</span><span class="hero-tag">Spring</span><span class="hero-tag">ETL</span><span class="hero-tag">Batch processing</span><span class="hero-tag">Déclaratif</span>
+    </div>
+  </div>
+</div>
+
+<div class="content">
+
+  <h2>Pourquoi Spring Batch ?</h2>
+  <p>Certains traitements ne peuvent pas s'exécuter en temps réel : migration de données, génération de rapports fiscaux, calculs de paie, imports massifs de fichiers CSV/XML. Ces <strong>traitements batch</strong> partagent des besoins communs :</p>
+  <ul>
+    <li>Traiter des volumes importants de données sans saturer la mémoire</li>
+    <li>Reprendre un traitement interrompu là où il s'est arrêté (<strong>restart</strong>)</li>
+    <li>Gérer les erreurs sans tout annuler (<strong>skip / retry</strong>)</li>
+    <li>Tracer l'exécution pour l'audit et le monitoring</li>
+  </ul>
+  <p>Spring Batch répond à tous ces besoins avec un modèle déclaratif et éprouvé.</p>
+
+  <h2>Architecture – Job, Step, Chunk</h2>
+
+  <div class="schema">
+    <div class="schema-title">Modèle d'exécution Spring Batch</div>
+    <div style="display:flex; flex-direction:column; gap:16px; align-items:center;">
+      <div class="flow-box fb-job" style="width:300px;">🗂 Job<br><span style="font-size:10px; color:#5fa0e0;">Unité de traitement complète</span></div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-box fb-step" style="width:260px;">Step 1 · Step 2 · Step N<br><span style="font-size:10px; color:#93c5fd;">Étapes séquentielles ou parallèles</span></div>
+      <div class="flow-arrow">↓</div>
+      <div style="display:flex; gap:8px; align-items:center;">
+        <div class="flow-box fb-reader">📥 ItemReader<br><span style="font-size:10px;">Lecture chunk</span></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box fb-processor">⚙️ ItemProcessor<br><span style="font-size:10px;">Transformation</span></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box fb-writer">📤 ItemWriter<br><span style="font-size:10px;">Écriture chunk</span></div>
+      </div>
+    </div>
+  </div>
+
+  <h3>Job</h3>
+  <p>Un <strong>Job</strong> est la représentation d'un traitement batch complet. Il est composé d'une ou plusieurs Steps et possède un <em>JobInstance</em> (exécution unique identifiée par ses paramètres) et un <em>JobExecution</em> (tentative d'exécution).</p>
+
+  <h3>Step</h3>
+  <p>Une <strong>Step</strong> est une phase du Job. Elle peut être de deux types :</p>
+  <ul>
+    <li><strong>Chunk-oriented :</strong> lecture → traitement → écriture par paquets (le plus courant)</li>
+    <li><strong>Tasklet :</strong> tâche simple et atomique (purge de table, envoi d'email, etc.)</li>
+  </ul>
+
+  <h3>Le modèle Chunk</h3>
+  <p>Le traitement par chunks est le cœur de Spring Batch. Les données sont lues par paquets (chunks) de taille configurable. Pour chaque chunk :</p>
+  <div class="code">
+    <pre><span class="cm">// Taille de chunk : 100 enregistrements à la fois</span>
+<span class="an">@Bean</span>
+<span class="kw">public</span> <span class="cl">Step</span> stepTraitementDeclarations(<span class="cl">JobRepository</span> jobRepository,
+                                         <span class="cl">PlatformTransactionManager</span> txManager) {
+    <span class="kw">return new</span> <span class="cl">StepBuilder</span>(<span class="st">"stepTraitement"</span>, jobRepository)
+        .&lt;<span class="cl">DeclarationInput</span>, <span class="cl">DeclarationOutput</span>&gt;chunk(<span class="kw">100</span>, txManager)
+        .reader(declarationReader())          <span class="cm">// lit 100 lignes</span>
+        .processor(declarationProcessor())   <span class="cm">// transforme chaque ligne</span>
+        .writer(declarationWriter())          <span class="cm">// écrit les 100 lignes en BDD</span>
+        .faultTolerant()
+        .skip(<span class="cl">ParseException</span>.<span class="kw">class</span>).skipLimit(<span class="kw">10</span>)  <span class="cm">// ignore jusqu'à 10 erreurs</span>
+        .retry(<span class="cl">DeadlockLoserDataAccessException</span>.<span class="kw">class</span>).retryLimit(<span class="kw">3</span>)
+        .build();
+}</pre>
+  </div>
+
+  <h2>Les composants clés</h2>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">ItemReader</div>
+      <p>Lit les données source une par une. Implémentations natives : <code>FlatFileItemReader</code> (CSV), <code>JpaPagingItemReader</code> (BDD), <code>StaxEventItemReader</code> (XML), <code>JdbcCursorItemReader</code>.</p>
+    </div>
+    <div class="card">
+      <div class="card-title">ItemProcessor</div>
+      <p>Transforme chaque élément lu. Optionnel. Peut filtrer (retourner <code>null</code> exclut l'élément du chunk). Composable avec <code>CompositeItemProcessor</code>.</p>
+    </div>
+    <div class="card">
+      <div class="card-title">ItemWriter</div>
+      <p>Écrit le chunk traité en sortie. Implémentations natives : <code>JpaItemWriter</code>, <code>JdbcBatchItemWriter</code>, <code>FlatFileItemWriter</code>, <code>CompositeItemWriter</code>.</p>
+    </div>
+    <div class="card">
+      <div class="card-title">JobRepository</div>
+      <p>Persistence des métadonnées d'exécution (JobInstance, JobExecution, StepExecution). Permet le restart et l'audit. Utilise une base de données dédiée.</p>
+    </div>
+  </div>
+
+  <h2>Gestion des erreurs</h2>
+  <ul>
+    <li><strong>Skip :</strong> ignorer les enregistrements en erreur et continuer (avec limite configurable)</li>
+    <li><strong>Retry :</strong> relancer le traitement d'un chunk en cas d'erreur transitoire (ex: deadlock BDD)</li>
+    <li><strong>Restart :</strong> reprendre un Job interrompu depuis le dernier checkpoint validé</li>
+    <li><strong>Listeners :</strong> hooks sur le cycle de vie (avant/après Job, Step, Chunk, Item)</li>
+  </ul>
+
+  <div class="callout">
+    <strong>Cas d'usage typiques :</strong> déclarations fiscales (PASRAU, 1042-S), imports de fichiers métier, migrations de données, génération de rapports périodiques, synchronisation entre systèmes.
+  </div>
+
+  <h2>Outils complémentaires</h2>
+  <p>
+    <span class="tag-inline">Spring Boot</span>
+    <span class="tag-inline">Spring Batch Integration</span>
+    <span class="tag-inline">Quartz Scheduler</span>
+    <span class="tag-inline">Micrometer (monitoring)</span>
+    <span class="tag-inline">Testcontainers (tests)</span>
+  </p>
+
+</div>
+
+<footer>Thomas Quenault · quenaultthomas.dev</footer>
+</body>
+</html>

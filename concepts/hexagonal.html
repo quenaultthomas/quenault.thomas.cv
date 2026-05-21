@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Architecture Hexagonale – Thomas Quenault</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root { --dark:#0d1b2a; --blue:#2d6be4; --blue-l:#deeafc; --blue-t:#1a4fae; --white:#ffffff; --muted:#7a96b5; --text:#1c2b3a; --sub:#4a5e72; --border:#dde6f0; --bg:#f4f7fb; --off:#f8fafc; }
+  body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text); line-height:1.7; }
+  .topbar { position:sticky; top:0; z-index:100; background:var(--dark); padding:12px 40px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid rgba(255,255,255,0.06); }
+  .topbar a { display:inline-flex; align-items:center; gap:8px; text-decoration:none; color:#7a96b5; font-size:13px; font-weight:500; }
+  .topbar a:hover { color:#fff; }
+  .topbar-title { font-size:13px; color:#3a5a75; }
+  .hero { background:var(--dark); padding:56px 40px; }
+  .hero-inner { max-width:800px; margin:0 auto; }
+  .hero-eyebrow { font-size:10px; font-weight:500; text-transform:uppercase; letter-spacing:3px; color:#5fa0e0; margin-bottom:16px; }
+  .hero-title { font-family:'DM Serif Display',serif; font-size:clamp(36px,5vw,52px); color:#fff; line-height:1.1; margin-bottom:16px; }
+  .hero-sub { font-size:16px; color:#7a96b5; line-height:1.6; max-width:560px; }
+  .hero-tags { display:flex; flex-wrap:wrap; gap:8px; margin-top:24px; }
+  .hero-tag { font-size:11px; font-weight:500; padding:4px 12px; border-radius:20px; background:rgba(45,107,228,0.2); color:#7eb4f7; border:1px solid rgba(45,107,228,0.3); }
+  .content { max-width:800px; margin:0 auto; padding:56px 40px; }
+  h2 { font-family:'DM Serif Display',serif; font-size:26px; color:var(--text); margin:48px 0 16px; padding-bottom:12px; border-bottom:2px solid var(--border); }
+  h3 { font-size:16px; font-weight:500; color:var(--text); margin:28px 0 10px; }
+  p { font-size:15px; color:var(--sub); margin-bottom:16px; line-height:1.75; }
+  ul { padding-left:20px; margin-bottom:16px; }
+  ul li { font-size:15px; color:var(--sub); margin-bottom:8px; line-height:1.65; }
+  ul li strong { color:var(--text); }
+  strong { color:var(--text); }
+  .callout { background:var(--blue-l); border-left:3px solid var(--blue); border-radius:0 8px 8px 0; padding:16px 20px; margin:24px 0; font-size:14px; color:var(--sub); }
+  .callout strong { color:var(--blue-t); }
+  .schema { background:var(--white); border:1px solid var(--border); border-radius:12px; padding:32px; margin:24px 0; }
+  .schema-title { font-size:11px; font-weight:500; text-transform:uppercase; letter-spacing:2px; color:var(--muted); margin-bottom:24px; text-align:center; }
+  .code { background:#111820; border-radius:10px; padding:20px 24px; margin:20px 0; overflow-x:auto; }
+  .code pre { font-family:'Fira Code',monospace; font-size:13px; line-height:1.7; color:#aec3d8; }
+  .code .kw { color:#7eb4f7; }
+  .code .cl { color:#4ade80; }
+  .code .cm { color:#4a6a80; font-style:italic; }
+  .grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:20px 0; }
+  .card { background:var(--white); border:1px solid var(--border); border-radius:10px; padding:20px; }
+  .card-title { font-size:11px; font-weight:500; text-transform:uppercase; letter-spacing:2px; color:var(--blue); margin-bottom:12px; }
+  .card p { font-size:13px; margin-bottom:0; }
+  .tag-inline { display:inline-block; font-size:11px; font-weight:500; padding:2px 9px; border-radius:20px; background:var(--blue-l); color:var(--blue-t); margin:2px; }
+  footer { text-align:center; padding:32px; font-size:11px; color:var(--muted); border-top:1px solid var(--border); margin-top:40px; }
+  @media(max-width:640px) { .grid-2 { grid-template-columns:1fr; } .content { padding:40px 20px; } .hero { padding:40px 20px; } .topbar { padding:12px 20px; } }
+
+  /* Hexagon diagram */
+  .hexa-wrap { display:flex; justify-content:center; align-items:center; padding:20px 0; }
+  .hexa-outer { position:relative; width:320px; height:320px; }
+  .hexa-ring { position:absolute; inset:0; border-radius:50%; display:flex; align-items:center; justify-content:center; }
+  .hexa-ring-3 { background:#f0f4fa; border:2px dashed #bfdbfe; }
+  .hexa-ring-2 { inset:50px; background:#deeafc; border:2px solid #93c5fd; }
+  .hexa-ring-1 { inset:110px; background:#1e40af; border:none; }
+  .hexa-label-center { font-size:12px; font-weight:600; color:#fff; text-align:center; line-height:1.3; z-index:2; }
+  .hexa-label-mid { position:absolute; font-size:10px; font-weight:500; color:#1e40af; text-align:center; }
+  .hexa-label-out { position:absolute; font-size:10px; color:var(--sub); text-align:center; background:white; padding:4px 8px; border-radius:6px; border:1px solid var(--border); white-space:nowrap; }
+  .port-label { position:absolute; font-size:9px; font-weight:500; text-transform:uppercase; letter-spacing:1px; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="../index.html">
+    <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+    Retour au portfolio
+  </a>
+  <span class="topbar-title">Culture technique</span>
+</div>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-eyebrow">Architecture logicielle</div>
+    <h1 class="hero-title">Architecture Hexagonale</h1>
+    <p class="hero-sub">Aussi appelée <em>Ports & Adapters</em>, cette architecture isole le cœur métier de l'application de toute dépendance technique, pour un code plus testable et plus évolutif.</p>
+    <div class="hero-tags">
+      <span class="hero-tag">Ports & Adapters</span>
+      <span class="hero-tag">Clean Architecture</span>
+      <span class="hero-tag">Testabilité</span>
+      <span class="hero-tag">Découplage</span>
+    </div>
+  </div>
+</div>
+
+<div class="content">
+
+  <h2>Le principe</h2>
+  <p>Introduite par Alistair Cockburn en 2005, l'architecture hexagonale repose sur une idée simple : le <strong>domaine métier ne doit dépendre de rien</strong> — ni de la base de données, ni du framework web, ni d'un service externe.</p>
+  <p>Toutes les interactions avec l'extérieur passent par des <strong>ports</strong> (interfaces définies par le domaine) et des <strong>adaptateurs</strong> (implémentations concrètes fournies par l'infrastructure).</p>
+
+  <div class="schema">
+    <div class="schema-title">Vue d'ensemble – Ports & Adapters</div>
+    <div style="display:flex; flex-direction:column; gap:0; align-items:center;">
+      <!-- Driving side -->
+      <div style="display:flex; gap:8px; margin-bottom:8px;">
+        <div style="background:#fef9ec; border:1px solid #fde68a; border-radius:8px; padding:8px 16px; font-size:12px; color:#92400e; text-align:center;">API REST<br><span style="font-size:10px; color:#b45309;">Adaptateur entrant</span></div>
+        <div style="background:#fef9ec; border:1px solid #fde68a; border-radius:8px; padding:8px 16px; font-size:12px; color:#92400e; text-align:center;">CLI<br><span style="font-size:10px; color:#b45309;">Adaptateur entrant</span></div>
+        <div style="background:#fef9ec; border:1px solid #fde68a; border-radius:8px; padding:8px 16px; font-size:12px; color:#92400e; text-align:center;">Tests<br><span style="font-size:10px; color:#b45309;">Adaptateur entrant</span></div>
+      </div>
+      <div style="font-size:20px; color:var(--muted);">↕ Ports entrants (Use Cases)</div>
+      <!-- Core -->
+      <div style="background:#1e40af; color:white; border-radius:12px; padding:20px 40px; margin:8px 0; text-align:center;">
+        <div style="font-size:14px; font-weight:600;">⭐ Domaine métier</div>
+        <div style="font-size:11px; color:#93c5fd; margin-top:4px;">Entités · Agrégats · Services</div>
+      </div>
+      <div style="font-size:20px; color:var(--muted);">↕ Ports sortants (Repositories, etc.)</div>
+      <!-- Driven side -->
+      <div style="display:flex; gap:8px; margin-top:8px;">
+        <div style="background:#ecfdf5; border:1px solid #a7f3d0; border-radius:8px; padding:8px 16px; font-size:12px; color:#065f46; text-align:center;">PostgreSQL<br><span style="font-size:10px; color:#0b8a6e;">Adaptateur sortant</span></div>
+        <div style="background:#ecfdf5; border:1px solid #a7f3d0; border-radius:8px; padding:8px 16px; font-size:12px; color:#065f46; text-align:center;">RabbitMQ<br><span style="font-size:10px; color:#0b8a6e;">Adaptateur sortant</span></div>
+        <div style="background:#ecfdf5; border:1px solid #a7f3d0; border-radius:8px; padding:8px 16px; font-size:12px; color:#065f46; text-align:center;">API externe<br><span style="font-size:10px; color:#0b8a6e;">Adaptateur sortant</span></div>
+      </div>
+    </div>
+  </div>
+
+  <h2>Ports & Adapters en détail</h2>
+
+  <h3>Les Ports</h3>
+  <p>Un port est une <strong>interface définie par le domaine</strong>. Il représente un besoin du domaine sans savoir comment il sera satisfait. Il en existe deux types :</p>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">Ports entrants (Driving)</div>
+      <p>Ce que le domaine expose au monde extérieur. Ce sont les <em>use cases</em> : les actions que l'utilisateur ou un système peut déclencher.</p>
+    </div>
+    <div class="card">
+      <div class="card-title">Ports sortants (Driven)</div>
+      <p>Ce dont le domaine a besoin depuis l'extérieur. Exemple : <code>CommandeRepository</code>, <code>EmailSender</code>, <code>StockService</code>.</p>
+    </div>
+  </div>
+
+  <h3>Les Adaptateurs</h3>
+  <p>Un adaptateur est l'<strong>implémentation concrète</strong> d'un port. Il fait le lien entre le domaine et le monde extérieur (framework, base de données, API tierce).</p>
+
+  <div class="code">
+    <pre><span class="cm">// PORT SORTANT – défini par le domaine</span>
+<span class="kw">public interface</span> <span class="cl">CommandeRepository</span> {
+    <span class="cl">Commande</span> findById(<span class="cl">CommandeId</span> id);
+    <span class="kw">void</span> save(<span class="cl">Commande</span> commande);
+}
+
+<span class="cm">// ADAPTATEUR – implémentation infrastructure (JPA)</span>
+<span class="kw">public class</span> <span class="cl">JpaCommandeRepository</span> <span class="kw">implements</span> <span class="cl">CommandeRepository</span> {
+    <span class="kw">private final</span> <span class="cl">JpaCommandeJpaRepository</span> jpaRepo;
+
+    <span class="kw">public</span> <span class="cl">Commande</span> findById(<span class="cl">CommandeId</span> id) {
+        <span class="kw">return</span> jpaRepo.findById(id.value())
+            .map(<span class="cl">CommandeMapper</span>::toDomain)
+            .orElseThrow();
+    }
+}</pre>
+  </div>
+
+  <h2>Structure de projet type</h2>
+  <div class="code">
+    <pre><span class="cm">src/main/java/</span>
+├── <span class="cl">domain/</span>            <span class="cm">← cœur métier, 0 dépendance externe</span>
+│   ├── model/         <span class="cm">← entités, agrégats, value objects</span>
+│   ├── port/
+│   │   ├── in/        <span class="cm">← interfaces use cases (ports entrants)</span>
+│   │   └── out/       <span class="cm">← interfaces repo/services (ports sortants)</span>
+│   └── service/       <span class="cm">← logique métier (implémente les ports entrants)</span>
+│
+├── <span class="cl">application/</span>       <span class="cm">← orchestration, DTOs, mappers</span>
+│
+└── <span class="cl">infrastructure/</span>    <span class="cm">← adaptateurs concrets</span>
+    ├── web/           <span class="cm">← controllers REST (adaptateur entrant)</span>
+    ├── persistence/   <span class="cm">← JPA, repositories (adaptateur sortant)</span>
+    └── messaging/     <span class="cm">← RabbitMQ, Kafka (adaptateur sortant)</span></pre>
+  </div>
+
+  <h2>Avantages</h2>
+  <ul>
+    <li><strong>Testabilité :</strong> le domaine peut être testé sans base de données ni framework, avec de simples mocks des ports sortants</li>
+    <li><strong>Flexibilité :</strong> changer de base de données ou de framework ne touche pas au domaine</li>
+    <li><strong>Lisibilité :</strong> le code métier est clairement séparé du code technique</li>
+    <li><strong>Compatibilité DDD :</strong> s'intègre naturellement avec les principes du Domain-Driven Design</li>
+  </ul>
+
+  <div class="callout">
+    <strong>Règle d'or :</strong> les dépendances pointent toujours vers le domaine, jamais depuis le domaine vers l'extérieur. Le domaine ne connaît ni Spring, ni JPA, ni PostgreSQL.
+  </div>
+
+  <h2>Frameworks Java</h2>
+  <p>
+    <span class="tag-inline">Spring Boot</span>
+    <span class="tag-inline">Quarkus</span>
+    <span class="tag-inline">Micronaut</span>
+    <span class="tag-inline">jMolecules</span>
+    <span class="tag-inline">ArchUnit (tests d'architecture)</span>
+  </p>
+
+</div>
+
+<footer>Thomas Quenault · quenaultthomas.dev</footer>
+</body>
+</html>
